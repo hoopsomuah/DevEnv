@@ -8,6 +8,56 @@ if(get-module pscx -ListAvailable)
 
 
 #-----------------------------------------------------------------------------------------------------------------
+# Drive Aliases
+#-----------------------------------------------------------------------------------------------------------------
+
+$driveAliases = @{}
+
+$driveAliases['src'] = join-path $env:userprofile "source"
+$driveAliases['repos'] = join-path $driveAliases['src'] "repos"
+
+$driveAliases['eShop'] = join-path $driveAliases['repos'] "eShop"
+$driveAliases['ugrt'] = join-path $driveAliases['repos'] "UserGraph"
+
+$alternateDriveFunctionNames = @{}
+$alternateDriveFunctionNames['variable'] = "var"
+$alternateDriveFunctionNames['function'] = "fn"
+
+# Create new PS Drives
+foreach($d in $driveAliases.GetEnumerator())
+{
+  if(-not (test-path $d.Value))
+    {
+        Write-Host "Not creating $($d.Key): because the path $($d.Value) does not exist"
+        continue
+    }
+
+    if(test-path "$($d.Key):")
+    {
+        Write-Host "Not creating $($d.Key): because the drive is already in use"
+        continue
+    }
+
+  new-psdrive $d.Key FileSystem $d.Value -Scope Global | out-null
+
+}
+
+# Replace PS Drive Functions
+foreach ($d in Get-PSDrive)
+{
+  if(test-path "function:global:$($d.Name):")
+  {
+    remove-item -path "function:\$($d.Name):"
+  }
+
+  $functionName = $alternateDriveFunctionNames[$d.Name]
+  if($functionName -eq $null) { $functionName = "$($d.Name)" }
+
+  $scriptBlock = "Set-Location $($d.Name):"
+  new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
+}
+
+#-----------------------------------------------------------------------------------------------------------------
 # Figure out if we're running as an elevated (UAC) process
 #-----------------------------------------------------------------------------------------------------------------
 
