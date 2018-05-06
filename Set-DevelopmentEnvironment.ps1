@@ -1,11 +1,33 @@
 if(get-module pscx -ListAvailable)
 {
-    write "Importing PowerShell Community Extensions"
+    Write-Output "Importing PowerShell Community Extensions"
     Import-Module pscx -NoClobber -arg "$PSScriptRoot\Pscx.UserPreferences.ps1"
 } else {
-  write "PowerShell Community Extensions are not available. Not importing module"
+    Write-Output "PowerShell Community Extensions are not available. Not importing module"
 }
 
+if(get-module poshgit -ListAvailable)
+{
+    Write-Output "Importing POSH Git"
+    Import-Module poshgit -NoClobber 
+} else {
+    Write-Output "PowerShell Git Module not available. Not importing"
+}
+
+#-----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------
+function global:Update-GitRepositories{
+  get-childitem -r -h -i ".git" | 
+    ForEach-Object { 
+      $d= $(split-path -parent $_)
+      Write-Output "pulling $d..."
+      Set-Location $d
+      git fetch origin
+      #TODO: if nothing is staged, maybe do a pull instead
+    }
+}
+
+set-alias gfetch Update-GitRepositories
 
 #-----------------------------------------------------------------------------------------------------------------
 # Drive Aliases
