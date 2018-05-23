@@ -1,29 +1,29 @@
-if(get-module pscx -ListAvailable)
-{
+if (get-module pscx -ListAvailable) {
     Write-Output "Importing PowerShell Community Extensions"
     Import-Module pscx -NoClobber -arg "$PSScriptRoot\Pscx.UserPreferences.ps1"
-} else {
+}
+else {
     Write-Output "PowerShell Community Extensions are not available. Not importing module"
 }
 
-if(get-module poshgit -ListAvailable)
-{
+if (get-module poshgit -ListAvailable) {
     Write-Output "Importing POSH Git"
     Import-Module poshgit -NoClobber 
-} else {
+}
+else {
     Write-Output "PowerShell Git Module not available. Not importing"
 }
 
 #-----------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------
-function global:Update-GitRepositories{
-  get-childitem -r -h -i ".git" | 
-    ForEach-Object { 
-      $d= $(split-path -parent $_)
-      Write-Output "pulling $d..."
-      Set-Location $d
-      git fetch origin
-      #TODO: if nothing is staged, maybe do a pull instead
+function global:Update-GitRepositories {
+    get-childitem -r -h -i ".git" | 
+        ForEach-Object { 
+        $d = $(split-path -parent $_)
+        Write-Output "pulling $d..."
+        Set-Location $d
+        git fetch origin
+        #TODO: if nothing is staged, maybe do a pull instead
     }
 }
 
@@ -46,110 +46,163 @@ $alternateDriveFunctionNames['variable'] = "var"
 $alternateDriveFunctionNames['function'] = "fn"
 
 # Create new PS Drives
-foreach($d in $driveAliases.GetEnumerator())
-{
-  if(-not (test-path $d.Value))
-    {
+foreach ($d in $driveAliases.GetEnumerator()) {
+    if (-not (test-path $d.Value)) {
         Write-Host "Not creating $($d.Key): because the path $($d.Value) does not exist"
         continue
     }
 
-    if(test-path "$($d.Key):")
-    {
+    if (test-path "$($d.Key):") {
         Write-Host "Not creating $($d.Key): because the drive is already in use"
         continue
     }
 
-  new-psdrive $d.Key FileSystem $d.Value -Scope Global | out-null
+    new-psdrive $d.Key FileSystem $d.Value -Scope Global | out-null
 
 }
 
 # Replace PS Drive Functions
-foreach ($d in Get-PSDrive)
-{
-  if(test-path "function:global:$($d.Name):")
-  {
-    remove-item -path "function:\$($d.Name):"
-  }
+foreach ($d in Get-PSDrive) {
+    if (test-path "function:global:$($d.Name):") {
+        remove-item -path "function:\$($d.Name):"
+    }
 
-  $functionName = $alternateDriveFunctionNames[$d.Name]
-  if($functionName -eq $null) { $functionName = "$($d.Name)" }
+    $functionName = $alternateDriveFunctionNames[$d.Name]
+    if ($functionName -eq $null) { $functionName = "$($d.Name)" }
 
-  $scriptBlock = "Set-Location $($d.Name):"
-  new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
+    $scriptBlock = "Set-Location $($d.Name):"
+    new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
 }
 
 #-----------------------------------------------------------------------------------------------------------------
 # Figure out if we're running as an elevated (UAC) process
 #-----------------------------------------------------------------------------------------------------------------
 
-$script:wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-$script:prp=new-object System.Security.Principal.WindowsPrincipal($wid)
-$script:adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+$script:wid = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+$script:prp = new-object System.Security.Principal.WindowsPrincipal($wid)
+$script:adm = [System.Security.Principal.WindowsBuiltInRole]::Administrator
 $script:isAdmin = $prp.IsInRole($adm)
+
+
+
+
+function Import-GitModule($Loaded) {
+    if ($Loaded) { return }
+    $GitModule = Get-Module -Name Posh-Git -ListAvailable
+    if ($GitModule | Select-Object version | Where-Object version -le ([version]"0.6.1.20160330")) {
+        Import-Module Posh-Git > $null
+    }
+    if (-not ($GitModule) ) {
+        Write-Warning "Missing git support, install posh-git with 'Install-Module posh-git' and restart cmder."
+    }
+    # Make sure we only run once by alawys returning true
+    return $true
+}
+
+
+
+$isGitLoaded = $false
+#Anonymice Powerline
+$arrowSymbol = [char]0xE0B0;
+$branchSymbol = [char]0xE0A0;
+
+$defaultForeColor = "White"
+$defaultBackColor = "Black"
+$pathForeColor = "White"
+$pathBackColor = "DarkBlue"
+$gitCleanForeColor = "White"
+$gitCleanBackColor = "DarkGreen"
+$gitDirtyForeColor = "Black"
+$gitDirtyBackColor = "Yellow"
+
+function Write-GitPrompt() {
+    $status = Get-GitStatus
+
+    if ($status) {
+
+        # assume git folder is clean
+        $gitBackColor = $gitCleanBackColor
+        $gitForeColor = $gitCleanForeColor
+        if ($status.HasWorking -Or $status.HasIndex) {
+            # but if it's dirty, change the back color
+            $gitBackColor = $gitDirtyBackColor
+            $gitForeColor = $gitDirtyForeColor
+        }
+
+        # Close path prompt
+        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
+
+        # Write branch symbol and name
+        Write-Host " " $branchSymbol " " $status.Branch " " -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
+
+        <# Git status info
+        HasWorking   : False
+        Branch       : master
+        AheadBy      : 0
+        Working      : {}
+        Upstream     : origin/master
+        StashCount   : 0
+        Index        : {}
+        HasIndex     : False
+        BehindBy     : 0
+        HasUntracked : False
+        GitDir       : D:\amr\SourceCode\DevDiary\.git
+        #>
+
+        # close git prompt
+        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
+    } else {
+        Write-Host $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor
+    }
+}
+
+function getGitStatus($Path) {
+    if (Test-Path -Path (Join-Path $Path '.git') ){
+        $isGitLoaded = Import-GitModule $isGitLoaded
+        Write-GitPrompt
+        return
+    }
+    $SplitPath = split-path $path
+    if ($SplitPath) {
+        getGitStatus($SplitPath)
+    }
+    else {
+        Write-Host $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor
+    }
+}
+
+function tildaPath($Path) {
+    return $Path.replace($env:USERPROFILE, "~")
+}
+
+
 
 #-----------------------------------------------------------------------------------------------------------------
 # Set prompt creation function
 #-----------------------------------------------------------------------------------------------------------------
 set-item -path 'function:global:prompt' -value {
 
-  #write-host -nonewline -f Green ((get-history -Count 1).ID + 1)
-  $location = get-location
+    #write-host -nonewline -f Green ((get-history -Count 1).ID + 1)
+    $location = get-location
 
-  #break the path into pieces
+    #break the path into pieces
 
-  $fColor = "yellow"
-  write-host
+    $fColor = "yellow"
+    write-host
 
-  $usernameColor = "darkgreen"
-  if($isAdmin){
-    $usernameColor = "red"
-  }
+    $usernameColor = "darkgreen"
+    if ($isAdmin) {
+        $usernameColor = "red"
+    }
 
-  write-host "$env:USERNAME@$($env:COMPUTERNAME.toLower()) "  -nonewline -ForegroundColor $usernameColor
+    $tp = $location.ProviderPath.replace($env:USERPROFILE, "~")
+    Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
-  #write-host -nonewline '[' -ForegroundColor $fColor
+    Write-GitPrompt
+    Write-Host
 
-  $nondrivePath = split-path $location.Path -noqualifier
-
-  if($location.Path.ToLower().StartsWith($env:USERPROFILE.ToLower()))
-  {
-      write-host -nonewline "~$($location.ProviderPath.Substring($env:USERPROFILE.Length))" -ForegroundColor $fColor
-  }
-  elseif($location.Drive -eq $null)
-  {
-      write-host -nonewline $nondrivePath -ForegroundColor $fColor
-  }
-  else
-  {
-      $pathParts = @()
-      while(($nondrivePath -ne "\") -and ($nondrivePath -ne ""))
-      {
-        $pathParts = @(split-path $nondrivePath -leaf) + $pathParts
-        $nondrivePath = split-path $nondrivePath -parent
-      }
-      write-host -nonewline $location.Drive.Name -ForegroundColor $fColor
-      write-host -nonewline ':'  -ForegroundColor $fColor
-      $pathParts | % {
-        write-host -nonewline '\'  -ForegroundColor $fColor
-
-        write-host -nonewline $_  -ForegroundColor $fColor
-      }
-  }
-  write-host #']'  -ForegroundColor $fColor
-
-  # enable posh-git in prompt if it's loaded
-  # ----------------------------------------------------------------------------
-  if($gitInPrompt)
-  {
-      $realLASTEXITCODE = $LASTEXITCODE
-      Write-VcsStatus
-
-      $global:LASTEXITCODE = $realLASTEXITCODE
-  }
-
-
-  write-host -nonewline (new-object string '$', ($nestedPromptLevel + 1))
-  return " "
+    Write-Host "$env:USERNAME@$($env:COMPUTERNAME.toLower())"  -NoNewLine -ForegroundColor $usernameColor
+    Write-Host -NoNewLine '$' -ForegroundColor $fColor
+    return " "
 }
 
