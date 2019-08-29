@@ -1,4 +1,4 @@
-if (get-module pscx -ListAvailable) {
+<# if (get-module pscx -ListAvailable) {
     Write-Output "Importing PowerShell Community Extensions"
     Import-Module pscx -NoClobber -arg "$PSScriptRoot\Pscx.UserPreferences.ps1"
 }
@@ -6,13 +6,13 @@ else {
     Write-Output "PowerShell Community Extensions are not available. Not importing module"
 }
 
-if (get-module poshgit -ListAvailable) {
+if (get-module posh-git -ListAvailable) {
     Write-Output "Importing POSH Git"
     Import-Module poshgit -NoClobber 
 }
 else {
     Write-Output "PowerShell Git Module not available. Not importing"
-}
+} #>
 
 #-----------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------
@@ -21,8 +21,9 @@ function global:Update-GitRepositories {
         ForEach-Object { 
         $d = $(split-path -parent $_)
         Write-Output "pulling $d..."
-        Set-Location $d
-        git fetch origin
+        Push-Location $d
+        git fetch 
+        Pop-Location
         #TODO: if nothing is staged, maybe do a pull instead
     }
 }
@@ -31,15 +32,18 @@ set-alias gfetch Update-GitRepositories
 
 #-----------------------------------------------------------------------------------------------------------------
 # Drive Aliases
+#
+# This section creates PowerShell drives for some common directories
+#
 #-----------------------------------------------------------------------------------------------------------------
 
 $driveAliases = @{}
 
 $driveAliases['src'] = join-path $env:userprofile "source"
 $driveAliases['repos'] = join-path $driveAliases['src'] "repos"
+$driveAliases['mrs'] = join-path $driveAliases['repos'] "mrs"
+$driveAliases['ou'] = join-path $driveAliases['mrs'] "ou"
 
-$driveAliases['eShop'] = join-path $driveAliases['repos'] "eShop"
-$driveAliases['ugrt'] = join-path $driveAliases['repos'] "UserGraph"
 
 $alternateDriveFunctionNames = @{}
 $alternateDriveFunctionNames['variable'] = "var"
@@ -171,12 +175,6 @@ function getGitStatus($Path) {
     }
 }
 
-function tildaPath($Path) {
-    return $Path.replace($env:USERPROFILE, "~")
-}
-
-
-
 #-----------------------------------------------------------------------------------------------------------------
 # Set prompt creation function
 #-----------------------------------------------------------------------------------------------------------------
@@ -195,14 +193,14 @@ set-item -path 'function:global:prompt' -value {
         $usernameColor = "red"
     }
 
-    $tp = $location.ProviderPath.replace($env:USERPROFILE, "~")
+    $tp = $PWD.Path.replace($env:USERPROFILE, "~")
     Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
     Write-GitPrompt
     Write-Host
 
     Write-Host "$env:USERNAME@$($env:COMPUTERNAME.toLower())"  -NoNewLine -ForegroundColor $usernameColor
-    Write-Host -NoNewLine '$' -ForegroundColor $fColor
+    Write-Host -NoNewLine '🔥' # -ForegroundColor $fColor
     return " "
 }
 
