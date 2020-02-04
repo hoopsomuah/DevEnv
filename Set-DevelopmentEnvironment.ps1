@@ -20,9 +20,15 @@ function global:Update-GitRepositories {
     get-childitem -r -h -i ".git" | 
         ForEach-Object { 
         $d = $(split-path -parent $_)
-        Write-Output "pulling $d..."
+        Write-Output "fetching $d..."
         Push-Location $d
-        git fetch 
+        $status = Get-GitStatus
+        if($status.HasWorking)
+        {
+            git fetch --all
+        } else {
+            git pull --all
+        }
         Pop-Location
         #TODO: if nothing is staged, maybe do a pull instead
     }
