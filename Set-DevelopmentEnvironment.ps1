@@ -15,6 +15,7 @@ else {
 } #>
 
 #-----------------------------------------------------------------------------------------------------------------
+# gfetch - recursively fetch
 #-----------------------------------------------------------------------------------------------------------------
 function global:Update-GitRepositories {
     get-childitem -r -h -i ".git" | 
@@ -31,6 +32,25 @@ function global:Update-GitRepositories {
 set-alias gfetch Update-GitRepositories
 
 #-----------------------------------------------------------------------------------------------------------------
+# gremote - List all remotes
+#-----------------------------------------------------------------------------------------------------------------
+function global:Get-GitRemotes {
+    get-childitem -r -h -i ".git" | 
+        ForEach-Object { 
+        $d = $(split-path -parent $_)
+        Write-Output "Remotes for $d..."
+        Push-Location $d
+        git remote -v
+        Write-Output ""
+        Pop-Location
+        #TODO: if nothing is staged, maybe do a pull instead
+    }
+}
+
+set-alias gfetch Update-GitRepositories
+set-alias gremote Get-GitRemotes
+
+#-----------------------------------------------------------------------------------------------------------------
 # Drive Aliases
 #
 # This section creates PowerShell drives for some common directories
@@ -41,7 +61,9 @@ $driveAliases = @{}
 
 $driveAliases['src'] = join-path $env:userprofile "source"
 $driveAliases['repos'] = join-path $driveAliases['src'] "repos"
+$driveAliases["meow"] = join-path $driveAliases['repos'] "salvador"
 $driveAliases['mrs'] = join-path $driveAliases['repos'] "mrs"
+$driveAliases["oss"] = join-path $driveAliases['repos'] "oss"
 $driveAliases['ou'] = join-path $driveAliases['mrs'] "ou"
 
 
@@ -49,10 +71,15 @@ $alternateDriveFunctionNames = @{}
 $alternateDriveFunctionNames['variable'] = "var"
 $alternateDriveFunctionNames['function'] = "fn"
 
+# See https://www.nerdfonts.com/cheat-sheet
+$driveGlyphs = @{}
+$driveGlyphs["meow"] = "🐱"
+$driveGlyphs["oss"] = ""
+
 # Create new PS Drives
 foreach ($d in $driveAliases.GetEnumerator()) {
     if (-not (test-path $d.Value)) {
-        Write-Host "Not creating $($d.Key): because the path $($d.Value) does not exist"
+        Write-Host "Not creating $($d.Key): Local copy does not exist"
         continue
     }
 
@@ -72,7 +99,7 @@ foreach ($d in Get-PSDrive) {
     }
 
     $functionName = $alternateDriveFunctionNames[$d.Name]
-    if ($functionName -eq $null) { $functionName = "$($d.Name)" }
+    if ($null -eq $functionName) { $functionName = "$($d.Name)" }
 
     $scriptBlock = "Set-Location $($d.Name):"
     new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
@@ -194,6 +221,11 @@ set-item -path 'function:global:prompt' -value {
     }
 
     $tp = $PWD.Path.replace($env:USERPROFILE, "~")
+
+
+    $glyph = $driveGlyphs[$pwd.Drive.Name]
+    if ($null -ne $glyph) { $tp = "$glyph  $tp" }
+        
     Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
     Write-GitPrompt
