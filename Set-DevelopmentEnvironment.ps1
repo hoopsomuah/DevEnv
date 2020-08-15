@@ -14,6 +14,13 @@ else {
     Write-Output "PowerShell Git Module not available. Not importing"
 } #>
 
+$vswhereExe = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+if(Test-Path $vswhereExe){
+    $installPath = &$vswhereExe -version 16.0 -property installationpath
+    Import-Module (Join-Path $installPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
+    Enter-VsDevShell -VsInstallPath $installPath -SkipAutomaticLocation
+}
+
 #-----------------------------------------------------------------------------------------------------------------
 # gfetch - recursively fetch
 #-----------------------------------------------------------------------------------------------------------------
@@ -68,6 +75,7 @@ $driveAliases = @{}
 $driveAliases['src'] = join-path $env:userprofile "source"
 $driveAliases['repos'] = join-path $driveAliases['src'] "repos"
 $driveAliases["meow"] = join-path $driveAliases['repos'] "salvador"
+$driveAliases["cc"] = join-path $driveAliases['repos'] "salvador\services\clientchannel"
 $driveAliases['mrs'] = join-path $driveAliases['repos'] "mrs"
 $driveAliases["oss"] = join-path $driveAliases['repos'] "oss"
 $driveAliases['ou'] = join-path $driveAliases['mrs'] "ou"
@@ -80,7 +88,8 @@ $alternateDriveFunctionNames['function'] = "fn"
 # See https://www.nerdfonts.com/cheat-sheet
 $driveGlyphs = @{}
 $driveGlyphs["meow"] = "🐱"
-$driveGlyphs["oss"] = ""
+$driveGlyphs["oss"] = "$([char]0xf09b)"
+$driveGlyphs["cc"] = "ﴃ"
 
 # Create new PS Drives
 foreach ($d in $driveAliases.GetEnumerator()) {
@@ -140,7 +149,7 @@ function Import-GitModule($Loaded) {
 
 $isGitLoaded = $false
 #Anonymice Powerline
-$arrowSymbol = [char]0xE0B0;
+$arrowSymbol = [char]0xE0B4;
 $branchSymbol = [char]0xE0A0;
 
 $defaultForeColor = "White"
@@ -230,7 +239,7 @@ set-item -path 'function:global:prompt' -value {
 
 
     $glyph = $driveGlyphs[$pwd.Drive.Name]
-    if ($null -ne $glyph) { $tp = "$glyph  $tp" }
+    if ($glyph) { $tp = "$glyph  $tp" }
         
     Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
