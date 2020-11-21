@@ -8,7 +8,7 @@ else {
 
 if (get-module posh-git -ListAvailable) {
     Write-Output "Importing POSH Git"
-    Import-Module poshgit -NoClobber 
+    Import-Module poshgit -NoClobber
 }
 else {
     Write-Output "PowerShell Git Module not available. Not importing"
@@ -25,8 +25,8 @@ if(Test-Path $vswhereExe){
 # gfetch - recursively fetch
 #-----------------------------------------------------------------------------------------------------------------
 function global:Update-GitRepositories {
-    get-childitem -r -h -i ".git" | 
-        ForEach-Object { 
+    get-childitem -r -h -i ".git" |
+        ForEach-Object {
         $d = $(split-path -parent $_)
         Write-Output "fetching $d..."
         Push-Location $d
@@ -48,8 +48,8 @@ set-alias gfetch Update-GitRepositories
 # gremote - List all remotes
 #-----------------------------------------------------------------------------------------------------------------
 function global:Get-GitRemotes {
-    get-childitem -r -h -i ".git" | 
-        ForEach-Object { 
+    get-childitem -r -h -i ".git" |
+        ForEach-Object {
         $d = $(split-path -parent $_)
         Write-Output "Remotes for $d..."
         Push-Location $d
@@ -89,7 +89,7 @@ $alternateDriveFunctionNames['function'] = "fn"
 $driveGlyphs = @{}
 $driveGlyphs["meow"] = "🐱"
 $driveGlyphs["oss"] = "$([char]0xf09b)"
-$driveGlyphs["cc"] = "ﴃ"
+$driveGlyphs["cc"] = "$([char]0xf0c1)"
 
 # Create new PS Drives
 foreach ($d in $driveAliases.GetEnumerator()) {
@@ -240,7 +240,7 @@ set-item -path 'function:global:prompt' -value {
 
     $glyph = $driveGlyphs[$pwd.Drive.Name]
     if ($glyph) { $tp = "$glyph  $tp" }
-        
+
     Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
 
     Write-GitPrompt
