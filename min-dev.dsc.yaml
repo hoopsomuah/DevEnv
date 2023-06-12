@@ -112,5 +112,14 @@ properties:
         id: Microsoft.DotNet.SDK.Preview
         source: winget
 
+    # Install sysinternals
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Sysinternals Suite
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: 9P7KNL5RWT25
+        source: msstore
 
   configurationVersion: 0.2.0
