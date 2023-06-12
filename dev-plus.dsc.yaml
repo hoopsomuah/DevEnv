@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
+  resources:
+  
+    # Install GitHub Desktop
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install GitHub Desktop
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.DevHome
+        source: winget    
+
+    # Install DevHome
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Microsoft Dev Home
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: GitHub.GitHubDesktop
+        source: winget 
+
+    # Install PowerToys
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install PowerToys
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.PowerToys
+        source: winget    
+
+    # Install Visual Studio 2022
+    - resource: WinGetPackage
+      id: vsPackage
+      directives:
+        description: Install Visual Studio 2022
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudio.2022.Enterprise
+        source: winget
+
+    # Install required VS workloads
+    - resource: Microsoft.VisualStudio.DSC/VSComponents
+      dependsOn:
+        - vsPackage
+      directives:
+        description: Install required VS workloads
+        allowPrerelease: true
+      settings:
+        productId: Microsoft.VisualStudio.Product.Enterprise
+        channelId: VisualStudio.17.Release
+        vsconfigFile: ${WinGetConfigRoot}\.vsconfig
+
+  configurationVersion: 0.2.0
