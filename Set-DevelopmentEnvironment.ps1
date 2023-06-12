@@ -1,25 +1,5 @@
-<# if (get-module pscx -ListAvailable) {
-    Write-Output "Importing PowerShell Community Extensions"
-    Import-Module pscx -NoClobber -arg "$PSScriptRoot\Pscx.UserPreferences.ps1"
-}
-else {
-    Write-Output "PowerShell Community Extensions are not available. Not importing module"
-}
 
-if (get-module posh-git -ListAvailable) {
-    Write-Output "Importing POSH Git"
-    Import-Module poshgit -NoClobber
-}
-else {
-    Write-Output "PowerShell Git Module not available. Not importing"
-} #>
-
-$vswhereExe = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
-if(Test-Path $vswhereExe){
-    $installPath = &$vswhereExe -version 16.0 -property installationpath
-    Import-Module (Join-Path $installPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
-    Enter-VsDevShell -VsInstallPath $installPath -SkipAutomaticLocation
-}
+$env:POSH_GIT_ENABLED = $true
 
 #-----------------------------------------------------------------------------------------------------------------
 # gfetch - recursively fetch
@@ -74,11 +54,7 @@ $driveAliases = @{}
 
 $driveAliases['src'] = join-path $env:userprofile "source"
 $driveAliases['repos'] = join-path $driveAliases['src'] "repos"
-$driveAliases["meow"] = join-path $driveAliases['repos'] "salvador"
-$driveAliases["cc"] = join-path $driveAliases['repos'] "salvador\services\clientchannel"
-$driveAliases['mrs'] = join-path $driveAliases['repos'] "mrs"
 $driveAliases["oss"] = join-path $driveAliases['repos'] "oss"
-$driveAliases['ou'] = join-path $driveAliases['mrs'] "ou"
 
 
 $alternateDriveFunctionNames = @{}
@@ -130,124 +106,7 @@ $script:adm = [System.Security.Principal.WindowsBuiltInRole]::Administrator
 $script:isAdmin = $prp.IsInRole($adm)
 
 
-
-
-function Import-GitModule($Loaded) {
-    if ($Loaded) { return }
-    $GitModule = Get-Module -Name Posh-Git -ListAvailable
-    if ($GitModule | Select-Object version | Where-Object version -le ([version]"0.6.1.20160330")) {
-        Import-Module Posh-Git > $null
-    }
-    if (-not ($GitModule) ) {
-        Write-Warning "Missing git support, install posh-git with 'Install-Module posh-git' and restart cmder."
-    }
-    # Make sure we only run once by alawys returning true
-    return $true
-}
-
-
-
-$isGitLoaded = $false
-#Anonymice Powerline
-$arrowSymbol = [char]0xE0B4;
-$branchSymbol = [char]0xE0A0;
-
-$defaultForeColor = "White"
-$defaultBackColor = "Black"
-$pathForeColor = "White"
-$pathBackColor = "DarkBlue"
-$gitCleanForeColor = "White"
-$gitCleanBackColor = "DarkGreen"
-$gitDirtyForeColor = "Black"
-$gitDirtyBackColor = "Yellow"
-
-function Write-GitPrompt() {
-    $status = Get-GitStatus
-
-    if ($status) {
-
-        # assume git folder is clean
-        $gitBackColor = $gitCleanBackColor
-        $gitForeColor = $gitCleanForeColor
-        if ($status.HasWorking -Or $status.HasIndex) {
-            # but if it's dirty, change the back color
-            $gitBackColor = $gitDirtyBackColor
-            $gitForeColor = $gitDirtyForeColor
-        }
-
-        # Close path prompt
-        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $pathBackColor
-
-        # Write branch symbol and name
-        Write-Host " " $branchSymbol " " $status.Branch " " -NoNewLine -BackgroundColor $gitBackColor -ForegroundColor $gitForeColor
-
-        <# Git status info
-        HasWorking   : False
-        Branch       : master
-        AheadBy      : 0
-        Working      : {}
-        Upstream     : origin/master
-        StashCount   : 0
-        Index        : {}
-        HasIndex     : False
-        BehindBy     : 0
-        HasUntracked : False
-        GitDir       : D:\amr\SourceCode\DevDiary\.git
-        #>
-
-        # close git prompt
-        Write-Host $arrowSymbol -NoNewLine -BackgroundColor $defaultBackColor -ForegroundColor $gitBackColor
-    } else {
-        Write-Host $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor
-    }
-}
-
-function getGitStatus($Path) {
-    if (Test-Path -Path (Join-Path $Path '.git') ){
-        $isGitLoaded = Import-GitModule $isGitLoaded
-        Write-GitPrompt
-        return
-    }
-    $SplitPath = split-path $path
-    if ($SplitPath) {
-        getGitStatus($SplitPath)
-    }
-    else {
-        Write-Host $arrowSymbol -NoNewLine -ForegroundColor $pathBackColor
-    }
-}
-
-#-----------------------------------------------------------------------------------------------------------------
-# Set prompt creation function
-#-----------------------------------------------------------------------------------------------------------------
-set-item -path 'function:global:prompt' -value {
-
-    #write-host -nonewline -f Green ((get-history -Count 1).ID + 1)
-    $location = get-location
-
-    #break the path into pieces
-
-    $fColor = "yellow"
-    write-host
-
-    $usernameColor = "darkgreen"
-    if ($isAdmin) {
-        $usernameColor = "red"
-    }
-
-    $tp = $PWD.Path.replace($env:USERPROFILE, "~")
-
-
-    $glyph = $driveGlyphs[$pwd.Drive.Name]
-    if ($glyph) { $tp = "$glyph  $tp" }
-
-    Write-Host " $tp " -NoNewLine -BackgroundColor $pathBackColor -ForegroundColor $pathForeColor
-
-    Write-GitPrompt
-    Write-Host
-
-    Write-Host "$env:USERNAME@$($env:COMPUTERNAME.toLower())"  -NoNewLine -ForegroundColor $usernameColor
-    Write-Host -NoNewLine '🔥' # -ForegroundColor $fColor
-    return " "
-}
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ompPath = Join-Path $scriptPath "hoop.omp.json"
+oh-my-posh init pwsh --config $ompPath | Invoke-Expression
 
