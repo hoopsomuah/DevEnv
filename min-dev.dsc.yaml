@@ -115,11 +115,20 @@ properties:
     # Install sysinternals
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Sysinternals Suite
+        description: Install Sysinternals
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: 9P7KNL5RWT25
-        source: msstore
+        id: Microsoft.Sysinternals.ProcessMonitor
+        source: winget
+
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Sysinternals
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id:  Microsoft.Sysinternals.ProcessExplorer
+        source: winget
 
   configurationVersion: 0.2.0
