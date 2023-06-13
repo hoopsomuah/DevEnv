@@ -10,7 +10,8 @@
 #>
 [CmdletBinding()]
 param(
-    [switch]$reLaunched
+    [switch]$reLaunched,
+    [string]$repoBase = "https://github.com/hoopsomuah/PowerShell-DevEnv" 
 )
 
 if ($reLaunched) {
@@ -68,18 +69,26 @@ try {
         &winget.exe configure -f $PSScriptRoot\dev-plus.dsc.yaml $wingetArgs
     }
 
-    #validate that we are in the git repo and not running this script from a download.
-    if((git rev-parse --is-inside-work-tree) -ne 'true'){
-
-    }
-
-    if ((Test-Path $Profile.CurrentUserAllHosts) -and -not(Confirm-Action "Overwrite Existing Profile?"))
+    if ((Test-Path $Profile.CurrentUserAllHosts) -and -not(Confirm-Action "You have a Powershell Profile already located at "$($Profile.CurrentUserAllHosts)". Overwrite Existing Profile?"))
     {
         exit
     }
 
-    # copy the contents of the bootstrap folder to the users powershell script folder
-    Copy-Item -Path "$PSScriptRoot\bootstrap\profile.ps1" -Destination $Profile.CurrentUserAllHosts -Recurse -Force
+    #Check Whether we are in the git repo and not running this script from a download.
+    if($repoBase)
+    {
+        $uri = "$repoBase/raw/master/bootstrap/profile.ps1"
+        Invoke-WebRequest -Uri $uri -OutFile "$PSScriptRoot\bootstrap\profile.ps1"
+    }
+    if((git rev-parse --is-inside-work-tree) -and (Test-Path "$PSScriptRoot\bootstrap\profile.ps1"))
+    {
+        # copy the contents of the bootstrap folder to the users powershell script folder
+        Copy-Item -Path "$PSScriptRoot\bootstrap\profile.ps1" -Destination $Profile.CurrentUserAllHosts -Recurse -Force
+    } else {
+        Write-Host "Not in a git repo and no base url specificed. Skipping profile setup."
+        exit
+    }
+
 }
 finally {
     if ($reLaunched) {
