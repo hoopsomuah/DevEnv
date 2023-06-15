@@ -40,15 +40,7 @@ Write-Host "Cloning $repoUrl"
 git.exe clone $repoUrl $env:pwsh_devenv
 
 Push-Location $env:pwsh_devenv
-
-if((Get-ExecutionPolicy -Scope CurrentUser -ErrorAction SilentlyContinue) -eq "Restricted"){
-    if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Start-Process PowerShell -ArgumentList "Set-ExecutionPolicy RemoteSigned -Force" -Verb RunAs
-    } else {
-        Set-ExecutionPolicy RemoteSigned -Force
-    }
-}
-. .\bootstrap\Configure-DevBox.ps1
+Get-Content .\bootstrap\Configure-DevBox.ps1 | Invoke-Expression
 
 function Confirm-Action {
     [CmdletBinding()]

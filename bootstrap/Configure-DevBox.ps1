@@ -25,6 +25,8 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
+Set-ExecutionPolicy RemoteSigned -Force
+
 if (!(Get-Module posh-git -ListAvailable)) { Install-Module posh-git -Scope CurrentUser -Force }
 if (!(Get-Module PSReadLine -ListAvailable)) { Install-Module -Name PSReadLine -AllowPrerelease -Scope CurrentUser -Force }
 
