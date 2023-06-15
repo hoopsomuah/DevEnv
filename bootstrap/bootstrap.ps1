@@ -54,9 +54,8 @@ $repoUrl = "https://github.com/$repo.git"
 Write-Host "Cloning $repoUrl"
 git.exe clone $repoUrl $env:pwsh_devenv
 
-Push-Location $env:pwsh_devenv
-$firstRun = Get-Content .\bootstrap\Configure-DevBox.ps1 
-Invoke-Command $firstRun
+$firstRun = Get-Content $env:pwsh_devenv\bootstrap\Configure-DevBox.ps1 
+Invoke-Command -ScriptBlock $firstRun
 
 function Confirm-Action {
     [CmdletBinding()]
