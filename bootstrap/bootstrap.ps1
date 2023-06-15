@@ -68,7 +68,5 @@ $repoUrl = "https://github.com/$repo.git"
 Write-Host "Cloning $repoUrl"
 git.exe clone $repoUrl $env:pwsh_devenv
 
-$firstRun = Get-Content $env:pwsh_devenv\bootstrap\Configure-DevBox.ps1 
 Write-Host "Running Configure-DevBox script"
-Invoke-Command -ScriptBlock $firstRun
-
+Get-Content $env:pwsh_devenv\bootstrap\Configure-DevBox.ps1  | Invoke-Expression 
