@@ -40,7 +40,7 @@ Write-Host "Cloning $repoUrl"
 git.exe clone $repoUrl $env:pwsh_devenv
 
 Push-Location $env:pwsh_devenv
-Get-Content .\bootstrap\Configure-DevBox.ps1 | Invoke-Expression
+Get-Content .\bootstrap\Configure-DevBox.ps1 | Invoke-Command
 
 function Confirm-Action {
     [CmdletBinding()]
