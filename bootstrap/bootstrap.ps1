@@ -23,6 +23,9 @@ if (-not(Get-Command git.exe -ErrorAction SilentlyContinue))
     {
         Write-Host "Installing Git"
         winget.exe install -e --id Git.Git    
+
+        #refresh the path
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     }
     else 
     {
