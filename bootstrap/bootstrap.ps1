@@ -4,6 +4,8 @@
 .NOTES
     Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/bootstrap.ps1" | Invoke-Expression
 #>
+$repo = "hoopsomuah/DevEnv"
+
 if (Test-Path env:pwsh_devenv) { 
     $defaultPath = $env:pwsh_devenv
 } else {
