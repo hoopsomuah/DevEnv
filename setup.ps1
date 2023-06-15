@@ -7,19 +7,19 @@
 .PARAMETER reLaunched
     This parameter is used to indicate that the script has been relaunched in elevated mode.
 .NOTES
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/setup.ps1" | Invoke-Expression
+    $repo="hoopsomuah/DevEnv/master";Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/setup.ps1" | Invoke-Expression
 #>
 [CmdletBinding()]
 param(
     [switch]$reLaunched,
-    [string]$repo = "hoopsomuah/DevEnv/master" 
+    [string]$repo 
 )
 
 
 if ($reLaunched) {
     Write-Host "Relaunched in elevated mode..."
 }
-if ($repoBase) {
+if ($repo) {
     Write-Host "Using repo base: $repoBase"
 }
 
