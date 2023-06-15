@@ -35,9 +35,9 @@ if (-not(Get-Command git.exe -ErrorAction SilentlyContinue))
         exit
     }
 }
-
-Write-Host "Cloning DevEnv repo to $env:pwsh_devenv"
-git clone https://github.com/$repo.git $env:pwsh_devenv
+$repoUrl = "https://github.com/$repo.git"
+Write-Host "Cloning $repoUrl"
+git clone $repoUrl $env:pwsh_devenv
 
 Push-Location $env:pwsh_devenv
 . .\bootstrap\Configure-DevBox.ps1
