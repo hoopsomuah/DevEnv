@@ -1,4 +1,17 @@
 # check if we are running as admin and escalate if not.
+function Confirm-Action {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$Message
+    )
+    do {
+        $response = Read-Host "$Message (Y/N)"
+    } while ($response -notmatch "^[yn]$")
+
+    return $response -eq "y"
+}
+
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     if(Confirm-Action "This script must be run as Administrator.  Restart in elevated mode?")
     {
@@ -84,16 +97,3 @@ if((git rev-parse --is-inside-work-tree) -and (Test-Path "$PSScriptRoot\bootstra
     Copy-Item -Path "$PSScriptRoot\bootstrap\profile.ps1" -Destination $Profile.CurrentUserAllHosts -Recurse -Force
 }
 
-#----------------------------------------------------------
-function Confirm-Action {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    do {
-        $response = Read-Host "$Message (Y/N)"
-    } while ($response -notmatch "^[yn]$")
-
-    return $response -eq "y"
-}
