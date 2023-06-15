@@ -37,7 +37,7 @@ if (-not(Get-Command git.exe -ErrorAction SilentlyContinue))
 }
 $repoUrl = "https://github.com/$repo.git"
 Write-Host "Cloning $repoUrl"
-git clone $repoUrl $env:pwsh_devenv
+git.exe clone $repoUrl $env:pwsh_devenv
 
 Push-Location $env:pwsh_devenv
 
