@@ -1,4 +1,4 @@
-﻿if (-not (Test-Path env:pwsh_devenv)) { $env:pwsh_devenv = "$HOME\source\repos\PowerShell-DevEnv\" }
+﻿if (-not (Test-Path env:pwsh_devenv)) { $env:pwsh_devenv = "$HOME\src\DevEnv\" }
 
 $devEnvScriptPath = Join-Path $env:pwsh_devenv Set-DevelopmentEnvironment.ps1
 
