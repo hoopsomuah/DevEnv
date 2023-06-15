@@ -1,14 +1,3 @@
-<#
-.SYNOPSIS
-    Setup script for a new machine.
-.DESCRIPTION
-    This script will install the apps and tools I use on a new dev machine.
-    It will also configure the machine to my preferences.
-.PARAMETER reLaunched
-    This parameter is used to indicate that the script has been relaunched in elevated mode.
-#>
-[CmdletBinding]
-
 # check if we are running as admin and escalate if not.
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     if(Confirm-Action "This script must be run as Administrator.  Restart in elevated mode?")
