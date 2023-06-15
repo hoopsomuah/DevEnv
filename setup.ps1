@@ -12,15 +12,16 @@
 [CmdletBinding()]
 param(
     [switch]$reLaunched,
-    [string]$repo 
+    [string]$profilePath 
 )
 
+$repo="hoopsomuah/DevEnv/master";Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/setup.ps1" | Invoke-Expression
 
 if ($reLaunched) {
     Write-Host "Relaunched in elevated mode..."
 }
 if ($repo) {
-    Write-Host "Using repo base: $repoBase"
+    Write-Host "Using repo base: $repo"
 }
 
 switch ($VerbosePreference) {
