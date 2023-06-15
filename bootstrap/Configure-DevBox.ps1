@@ -7,14 +7,7 @@
 .PARAMETER reLaunched
     This parameter is used to indicate that the script has been relaunched in elevated mode.
 #>
-[CmdletBinding()]
-param(
-    [string]$repo = "hoopsomuah/DevEnv"
-)
-Write-Host "------------------------------------------------------------"
-Write-Host "$PSCommandPath"
-Write-Host "------------------------------------------------------------"
-
+[CmdletBinding]
 
 # check if we are running as admin and escalate if not.
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -22,6 +15,10 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     {
         $pwshArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "$PSCommandPath") + $args
         Start-Process -FilePath pwsh.exe -ArgumentList $pwshArgs -Verb RunAs -Wait
+        if ($LASTEXITCODE -ne 0)
+        {
+            Write-Host "Elevated Process exited with code $LASTEXITCODE"
+        }
     } else {
         Write-Warning "Dev Box Configuration Cancelled"
     }
