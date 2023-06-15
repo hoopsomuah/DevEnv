@@ -6,6 +6,20 @@
 #>
 $repo = "hoopsomuah/DevEnv"
 
+
+function Confirm-Action {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$Message
+    )
+    do {
+        $response = Read-Host "$Message (Y/N)"
+    } while ($response -notmatch "^[yn]$")
+
+    return $response -eq "y"
+}
+
 if (Test-Path env:pwsh_devenv) { 
     $defaultPath = $env:pwsh_devenv
 } else {
@@ -57,15 +71,3 @@ git.exe clone $repoUrl $env:pwsh_devenv
 $firstRun = Get-Content $env:pwsh_devenv\bootstrap\Configure-DevBox.ps1 
 Invoke-Command -ScriptBlock $firstRun
 
-function Confirm-Action {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    do {
-        $response = Read-Host "$Message (Y/N)"
-    } while ($response -notmatch "^[yn]$")
-
-    return $response -eq "y"
-}
