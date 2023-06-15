@@ -19,6 +19,21 @@ if (-not $userPath) {
     $env:pwsh_devenv = $userPath
 }        
 
+if(Test-path $env:pwsh_devenv)
+{   
+    if(Confirm-Action "The path $env:pwsh_devenv already exists. Delete existing folder?")
+    {
+        Write-Host "Deleting $env:pwsh_devenv"
+        Remove-Item $env:pwsh_devenv -Recurse -Force
+    }
+    else 
+    {
+        Write-Warning "Skipping Git installation. Git is required to clone the DevEnv repo"
+        exit
+    }
+}
+
+
 if (-not(Get-Command git.exe -ErrorAction SilentlyContinue))
 {
     if(Confirm-Action "Git is not installed. Install Git?")
