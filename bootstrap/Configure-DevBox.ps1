@@ -1,25 +1,26 @@
 <#
 .SYNOPSIS
-    Setup script for a new machine. This script can be downloaded and run from the web.
+    Setup script for a new machine.
 .DESCRIPTION
     This script will install the apps and tools I use on a new dev machine.
     It will also configure the machine to my preferences.
 .PARAMETER reLaunched
     This parameter is used to indicate that the script has been relaunched in elevated mode.
-.NOTES
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/setup.ps1" | Invoke-Expression
 #>
 [CmdletBinding()]
 param(
     [string]$repo = "hoopsomuah/DevEnv"
 )
+Write-Host "------------------------------------------------------------"
+Write-Host "$PSCommandPath"
+Write-Host "------------------------------------------------------------"
+
 
 # check if we are running as admin and escalate if not.
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     if(Confirm-Action "This script must be run as Administrator.  Restart in elevated mode?")
     {
         $pwshArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "$PSCommandPath") + $args
-        Write-Output "$pwshArgs"
         Start-Process -FilePath pwsh.exe -ArgumentList $pwshArgs -Verb RunAs -Wait
     } else {
         Write-Warning "Dev Box Configuration Cancelled"

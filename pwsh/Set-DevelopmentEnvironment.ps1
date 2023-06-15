@@ -107,6 +107,6 @@ $script:isAdmin = $prp.IsInRole($adm)
 
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ompPath = Join-Path $scriptPath "hoop.omp.json"
+$ompPath = Join-Path $scriptPath "ohmyposh\hoop.omp.json"
 oh-my-posh init pwsh --config $ompPath | Invoke-Expression
 
