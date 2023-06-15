@@ -2,7 +2,7 @@
 .SYNOPSIS
     Web Bootstrap script for a new machine.
 .NOTES
-    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/bootstrap.ps1" | Invoke-Expression
+    Invoke-WebRequest -Headers @{"Cache-Control"="no-cache"} -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/bootstrap.ps1" | Invoke-Expression
 #>
 $repo = "hoopsomuah/DevEnv"
 
@@ -55,7 +55,8 @@ Write-Host "Cloning $repoUrl"
 git.exe clone $repoUrl $env:pwsh_devenv
 
 Push-Location $env:pwsh_devenv
-Get-Content .\bootstrap\Configure-DevBox.ps1 | Invoke-Expression
+$firstRun = Get-Content .\bootstrap\Configure-DevBox.ps1 
+Invoke-Command $firstRun
 
 function Confirm-Action {
     [CmdletBinding()]
