@@ -6,17 +6,23 @@
     It will also configure the machine to my preferences.
 .PARAMETER reLaunched
     This parameter is used to indicate that the script has been relaunched in elevated mode.
-
+.NOTES
+    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/master/setup.ps1" | Invoke-Expression
 #>
 [CmdletBinding()]
 param(
     [switch]$reLaunched,
-    [string]$repoBase = "https://github.com/hoopsomuah/PowerShell-DevEnv" 
+    [string]$repo = "hoopsomuah/DevEnv/master" 
 )
+
 
 if ($reLaunched) {
     Write-Host "Relaunched in elevated mode..."
 }
+if ($repoBase) {
+    Write-Host "Using repo base: $repoBase"
+}
+
 switch ($VerbosePreference) {
     'SilentlyContinue' { Write-Host "Normal Mode" }
     'Continue' { Write-Host "Diagnostic Mode" }
@@ -77,8 +83,8 @@ try {
     #Check Whether we are in the git repo and not running this script from a download.
     if($repoBase)
     {
-        $uri = "$repoBase/raw/master/bootstrap/profile.ps1"
-        Invoke-WebRequest -Uri $uri -OutFile "$PSScriptRoot\bootstrap\profile.ps1"
+        $uri = "https://raw.githubusercontent.com/$repoBranch/bootstrap/profile.ps1"
+        Invoke-WebRequest -Uri $uri -OutFile $Profile.CurrentUserAllHosts
     }
     if((git rev-parse --is-inside-work-tree) -and (Test-Path "$PSScriptRoot\bootstrap\profile.ps1"))
     {
