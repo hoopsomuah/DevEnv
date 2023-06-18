@@ -1,17 +1,7 @@
 
 # check if we are running as admin and escalate if not.
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    if(Confirm-Action "This script must be run as Administrator.  Restart in elevated mode?")
-    {
-        $pwshArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "$PSCommandPath") + $args
-        Start-Process -FilePath pwsh.exe -ArgumentList $pwshArgs -Verb RunAs -Wait
-        if ($LASTEXITCODE -ne 0)
-        {
-            Write-Host "Elevated Process exited with code $LASTEXITCODE"
-        }
-    } else {
-        Write-Warning "Dev Box Configuration Cancelled"
-    }
+    Write-Error "Dev Box Configuration Cancelled. This script must be run as Administrator."
     exit
 }
 

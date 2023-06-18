@@ -59,8 +59,15 @@ $defaultChoice = 0
 
 $defaultLocation = "$HOME\src\DevEnv\"
 $devEnvSpecified = Test-Path env:pwsh_devenv
-$devEnvExists = $devEnvSpecified ? (Test-Path $env:pwsh_devenv) : $false
-$cloneLocation = $devEnvSpecified ? $env:pwsh_devenv : $d
+
+if ($devEnvSpecified) {
+    $devEnvExists = Test-Path $env:pwsh_devenv
+    $cloneLocation = $env:pwsh_devenv
+ } else {
+     $devEnvExists = $false 
+     $cloneLocation = $defaultLocation
+    }
+
 $existingDevEnvIsReal = $false
 $runningUnderExistingDevEnv = $false;
 
