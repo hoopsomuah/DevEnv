@@ -1,4 +1,3 @@
-[CmdletBinding()]
 
 # check if we are running as admin and escalate if not.
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -28,17 +27,17 @@ $wingetArgs = switch ($VerbosePreference) {
     default { '--verbose' }
 }
 
-&winget.exe configure -f $PSScriptRoot\min-dev.dsc.yaml $wingetArgs
+&winget.exe configure -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
 
 if (Confirm-Action "Install all dev apps?")
 { 
-    &winget.exe configure -f $PSScriptRoot\dev-plus.dsc.yaml $wingetArgs
+    &winget.exe configure -f $PSScriptRoot\..\winget\dev-plus.dsc.yaml $wingetArgs
 }
 
 # ---  Configure Powershell Profile ---
 if (Test-Path $Profile.CurrentUserAllHosts)
 {
-    if(Confirm-Action "You have a Powershell Profile already located at "$($Profile.CurrentUserAllHosts)". Overwrite Existing Profile?")
+    if(Confirm-Action "You have a Powershell Profile already located at `"$($Profile.CurrentUserAllHosts)`". Overwrite Existing Profile?")
     {
         $guid = New-Guid
         $backupFile = "$($Profile.CurrentUserAllHosts).$guid.bak"
@@ -50,9 +49,7 @@ if (Test-Path $Profile.CurrentUserAllHosts)
     }
 }
 
-if(Test-Path "$PSScriptRoot\bootstrap\profile.ps1")
-{
-    # copy the contents of the bootstrap folder to the users powershell script folder
-    Copy-Item -Path "$PSScriptRoot\bootstrap\profile.ps1" -Destination $Profile.CurrentUserAllHosts -Recurse -Force
-}
+# copy the contents of the bootstrap folder to the users powershell script folder
+Copy-Item -Path "$PSScriptRoot\..\pwsh\profile.ps1" -Destination $Profile.CurrentUserAllHosts -Recurse -Force
+
 

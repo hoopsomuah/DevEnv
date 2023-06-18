@@ -1,5 +1,19 @@
 
 #-----------------------------------------------------------------------------------------------------------------
+function Set-PsDriveFunctions {
+    # Replace PS Drive Functions
+    foreach ($d in Get-PSDrive) {
+        if (test-path "function:global:$($d.Name):") {
+            remove-item -path "function:\$($d.Name):"
+        }
+
+        $functionName = $alternateDriveFunctionNames[$d.Name]
+        if ($null -eq $functionName) { $functionName = "$($d.Name)" }
+
+        $scriptBlock = "Set-Location $($d.Name):"
+        new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
+    }
+}
 # confirm-action - Prompt for confirmation
 #-----------------------------------------------------------------------------------------------------------------
 function Confirm-Action {
@@ -61,8 +75,7 @@ function Replace-PsDriveFunctions {
             remove-item -path "function:\$($d.Name):"
         }
 
-        $functionName = $alternateDriveFunctionNames[$d.Name]
-        if ($null -eq $functionName) { $functionName = "$($d.Name)" }
+        $functionName = "$($d.Name)"
 
         $scriptBlock = "Set-Location $($d.Name):"
         new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null

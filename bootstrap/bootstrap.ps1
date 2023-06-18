@@ -36,41 +36,46 @@ function Is-FullDevEnvFolder
         [Parameter(Mandatory=$true)]
         [string]$Location
     )
-    if((Test-Path $Location\pwsh\profile.ps1)
-    -and (Test-Path $Location\bootstrap\Configure-DevBox.ps1)
-    -and (Test-Path $Location\bootstrap\bootstrap.ps1)
-        -and (Test-Path $Location\pwsh\utilities.ps1)
-        -and (Test-Path $Location\winget)
-        -and (Test-Path $Location\ohmyposh))
+    if((Test-Path $Location\pwsh\profile.ps1) -and 
+        (Test-Path $Location\bootstrap\Configure-DevBox.ps1) -and 
+        (Test-Path $Location\bootstrap\bootstrap.ps1) -and 
+        (Test-Path $Location\pwsh\utilities.ps1) -and 
+        (Test-Path $Location\winget) -and 
+        (Test-Path $Location\ohmyposh)) {
+        return $true
+    }
+    else {
+        return $false
+    }
 }
 
 [bool]$cloneRepo = $false
-[bool]$relaunch = $true
+[bool]$useOther = $true
 
 $choices = [System.Management.Automation.Host.ChoiceDescription[]]@()
-$message = "env:pwsh_devenv is set to an existing devEnv folder?"
+$message = "Choose your bootstrap option:"
 $caption = "Bootstrap DevEnv"
 $defaultChoice = 0
 
 $defaultLocation = "$HOME\src\DevEnv\"
 $devEnvSpecified = Test-Path env:pwsh_devenv
-
-$scriptParentFolder = (Split-Path $PSScriptRoot -Parent)
-$scriptRootIsDevEnvCandidate = Is-FullDevEnvFolder -Location $scriptParentFolder
-if($scriptRootIsDevEnvCandidate) {
-        $keepBootstrappingChoice = $choices.Count
-        $choices += "&Bootstrap From $scriptParentFolder"
-}
-
-$devEnvExists = $devEnvSpecified ? Test-Path $env:pwsh_devenv : $false
-
+$devEnvExists = $devEnvSpecified ? (Test-Path $env:pwsh_devenv) : $false
 $cloneLocation = $devEnvSpecified ? $env:pwsh_devenv : $d
 $existingDevEnvIsReal = $false
 $runningUnderExistingDevEnv = $false;
 
+$scriptParentFolder = (Split-Path $PSScriptRoot -Parent)
+if(Is-FullDevEnvFolder -Location $scriptParentFolder) {
+        $keepBootstrappingChoice = $choices.Count
+        $choices += "&Bootstrap From Here ($scriptParentFolder)"
+}
+
+
+
 if($devEnvExists) {
-    $runningUnderExistingDevEnv = $env:pwsh_devenv -eq (Split-Path $PSScriptRoot -Parent)
-    $existingDevEnvIsReal = $devEnvExists Is-FullDevEnvFolder -Location $env:pwsh_devenv
+    Write-Host "env:pwsh_devenv set to $env:pwsh_devenv"
+    $runningUnderExistingDevEnv = (Resolve-Path $env:pwsh_devenv).Path.TrimEnd('\') -eq (Resolve-Path (Split-Path $PSScriptRoot -Parent)).Path.TrimEnd('\')
+    $existingDevEnvIsReal = $devEnvExists -and (Is-FullDevEnvFolder -Location $env:pwsh_devenv)
      if(-not $existingDevEnvIsReal) { Write-Warning "The specified path $env:pwsh_devenv is not a valid DevEnv folder" }        
 } else {
     Write-Warning "env:pwsh_devenv set to $defaultPath which does not exist."
@@ -81,9 +86,9 @@ if(-not $runningUnderExistingDevEnv){
     if($devEnvSpecified){
         Write-Warning "The current script is not running under the specified DevEnv folder" 
         if($existingDevEnvIsReal) {
-            Write-Host "The specified path $env:pwsh_devenv is a valid DevEnv folder"
+            Write-Host "The specified path env:pwsh_devenv=$env:pwsh_devenv is a valid DevEnv folder"
             $relaunchChoice = $choices.Count
-            $choices = "&Relaunch Bootstrap from that folder" + $choices
+            $choices += "&Relaunch Bootstrap from $env:pwsh_devenv"
         }    
     }
 
@@ -102,12 +107,13 @@ $result = $Host.UI.PromptForChoice($caption,$message,$choices,$defaultChoice)
 switch ($result) {
     $keepBootstrappingChoice { 
         $env:pwsh_devenv = $scriptParentFolder
+        [Environment]::SetEnvironmentVariable("pwsh_devenv", $env:pwsh_devenv, "User")
         $cloneRepo = $false
-        $relaunch = $false;
+        $useOther = $false;
 
     } $relaunchChoice { 
         $cloneRepo = $false
-        $relaunch = $true;
+        $useOther = $true;
 
     } $cleanCloneChoiceChoice { 
         #delete the existing folder and clone the repo
@@ -152,14 +158,9 @@ if($cloneRepo) {
     Write-Host "Cloning $repoUrl"
     git.exe clone $repoUrl $cloneLocation
     $env:pwsh_devenv = $cloneLocation
+    [Environment]::SetEnvironmentVariable("pwsh_devenv", $env:pwsh_devenv, "User")
 }
 
-if($relaunch) {
-    $newBootstrap = "$env:pwsh_devenv\bootstrap\bootstrap.ps1"
-    Write-Host "Running $newBootstrap"
-    & $newBootstrap
-    exit $LASTEXITCODE
-}
-
-Write-Host "Running Configure-DevBox script"
-& .\Configure-DevBox.ps1 
+$configScript = "$env:pwsh_devenv\bootstrap\Configure-DevBox.ps1"
+Write-Host "Running $configScript"
+& $configScript
