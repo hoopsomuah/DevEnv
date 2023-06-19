@@ -20,15 +20,6 @@ function Confirm-Action {
     return $response -eq "y"
 }
 
-function Delete-DevEnvFolder {
-    if(Confirm-Action "Delete $env:pwsh_devenv?") {
-        Remove-Item $env:pwsh_devenv -Recurse -Force
-        return $true;
-    }
-    else {
-        return $false;
-    }
-}
 
 function Is-FullDevEnvFolder
 {
@@ -122,10 +113,17 @@ switch ($result) {
         $cloneRepo = $false
         $useOther = $true;
 
-    } $cleanCloneChoiceChoice { 
-        #delete the existing folder and clone the repo
-        Delete-DevEnvFolder
-        $cloneRepo = $true
+    } $cleanCloneChoice {
+
+        #delete the existing folder and clone the repo;
+
+        Write-Host "Cleaning and Cloning @ $cloneLocation"
+        if((Test-Path $cloneLocation) -and (Confirm-Action "Delete $cloneLocation`?")) {
+                Remove-Item $cloneLocation -Recurse -Force
+                #if calling remove failed we must exit with an error message
+                
+        }
+	$cloneRepo = $true
 
     } $providePathChoice {
         #ask the user to provide a path to clone the repo. If they don't, use the default
@@ -155,8 +153,7 @@ if($cloneRepo) {
             #refresh the path
             $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
             return $true
-        }
-        else {
+        } else {
             Write-Warning "Skipping Git installation. Git is required to clone the DevEnv repo"
             return $false
         }
@@ -166,6 +163,8 @@ if($cloneRepo) {
     git.exe clone $repoUrl $cloneLocation
     $env:pwsh_devenv = $cloneLocation
     [Environment]::SetEnvironmentVariable("pwsh_devenv", $env:pwsh_devenv, "User")
+} else {
+ Write-Host "Not Cloning Repo"
 }
 
 $configScript = "$env:pwsh_devenv\bootstrap\Configure-DevBox.ps1"

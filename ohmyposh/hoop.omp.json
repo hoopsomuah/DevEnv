@@ -36,7 +36,7 @@
           "properties": {
             "style": "agnoster_full"
           },
-          "template": " \udb80\ude4b {{ .Path }} "
+          "template": " \udb80\ude4b\u00a0{{ .Path }}\u00a0"
         }
       ],
       "type": "prompt"
@@ -84,7 +84,7 @@
           "foreground": "#000000",
           "powerline_symbol": "\ue0c4",
           "style": "powerline",
-          "template": "\ueb59",
+          "template": "\ueb59\u00a0",
           "type": "text"
         },
         {
