@@ -81,3 +81,6 @@ function Replace-PsDriveFunctions {
         new-item -path "function:global:$($functionName):" -value $scriptBlock | out-null
     }
 }
+
+set-alias codei code-insiders.cmd -PassThru -Scope Global
+set-alias e code-insiders.cmd -PassThru -Scope Global

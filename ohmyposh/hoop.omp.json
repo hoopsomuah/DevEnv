@@ -34,9 +34,13 @@
           "style": "powerline",
           "powerline_symbol": "\ue0c6",
           "properties": {
-            "style": "agnoster_full"
+            "style": "agnoster_full",  
+            "mapped_locations": {
+              "~/src/*": "\ue702",
+              "~/src": "\ue702"
+            }
           },
-          "template": " \udb80\ude4b\u00a0{{ .Path }}\u00a0"
+          "template": "\u00a0{{ .Path }}\u00a0"
         }
       ],
       "type": "prompt"
