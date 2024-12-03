@@ -19,7 +19,7 @@ function Set-PsDriveFunctions {
 function Confirm-Action {
     param (
         [Parameter(Mandatory=$true)]
-        [string]$Message
+        [string]$Message    
     )
     do {
         $response = Read-Host "$Message (Y/N)"
@@ -82,5 +82,5 @@ function Replace-PsDriveFunctions {
     }
 }
 
-set-alias codei code-insiders.cmd -PassThru -Scope Global
-set-alias e code-insiders.cmd -PassThru -Scope Global
+set-alias codei code-insiders.cmd -Scope Global
+set-alias e code-insiders.cmd -Scope Global
