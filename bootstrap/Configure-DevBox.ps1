@@ -11,7 +11,7 @@ if (!(Get-Module posh-git -ListAvailable)) { Install-Module posh-git -Scope Curr
 if (!(Get-Module PSReadLine -ListAvailable)) { Install-Module -Name PSReadLine -AllowPrerelease -Scope CurrentUser -Force }
 
 $wingetArgs = switch ($VerbosePreference) {
-    'SilentlyContinue' { '--disable-interactivity' }
+    'SilentlyContinue' { '--accept-configuration-agreements --suppress-initial-details --disable-interactivity' }
     'Continue' { '--verbose' }
     'Stop' { '--verbose' }
     default { '--verbose' }
