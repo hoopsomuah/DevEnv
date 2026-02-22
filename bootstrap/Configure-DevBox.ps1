@@ -10,6 +10,8 @@ Set-ExecutionPolicy RemoteSigned -Force
 $wingetArgs = ''
 if ($VerbosePreference -ne 'SilentlyContinue') { $wingetArgs += ' --verbose' }
 
+Write-Host "Installing Requirements..."
+
 &winget.exe configure --enable
 &winget.exe configure --accept-configuration-agreements --suppress-initial-details --disable-interactivity -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
 
