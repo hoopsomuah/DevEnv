@@ -62,17 +62,19 @@ if ($devEnvSpecified) {
 $existingDevEnvIsReal = $false
 $runningUnderExistingDevEnv = $false;
 
-$scriptParentFolder = (Split-Path $PSScriptRoot -Parent)
-if(Is-FullDevEnvFolder -Location $scriptParentFolder) {
-        $keepBootstrappingChoice = $choices.Count
-        $choices += "&Bootstrap From Here ($scriptParentFolder)"
+if(-not [string]::IsNullOrEmpty($PSScriptRoot)) {
+    $scriptParentFolder = (Split-Path $PSScriptRoot -Parent)
+    if(Is-FullDevEnvFolder -Location $scriptParentFolder) {
+            $keepBootstrappingChoice = $choices.Count
+            $choices += "&Bootstrap From Here ($scriptParentFolder)"
+    }
 }
 
 
 
 if($devEnvExists) {
     Write-Host "env:pwsh_devenv set to $env:pwsh_devenv"
-    $runningUnderExistingDevEnv = (Resolve-Path $env:pwsh_devenv).Path.TrimEnd('\') -eq (Resolve-Path (Split-Path $PSScriptRoot -Parent)).Path.TrimEnd('\')
+    $runningUnderExistingDevEnv = (-not [string]::IsNullOrEmpty($PSScriptRoot)) -and (Resolve-Path $env:pwsh_devenv).Path.TrimEnd('\') -eq (Resolve-Path (Split-Path $PSScriptRoot -Parent)).Path.TrimEnd('\')
     $existingDevEnvIsReal = $devEnvExists -and (Is-FullDevEnvFolder -Location $env:pwsh_devenv)
      if(-not $existingDevEnvIsReal) { Write-Warning "The specified path $env:pwsh_devenv is not a valid DevEnv folder" }        
 } else {
