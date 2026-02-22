@@ -35,13 +35,13 @@ properties:
         id: GitHub.cli
         source: winget
 
-    # Install GitHub Copilot for CLI
+    # Install GitHub Copilot
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install GitHub Copilot for CLI
+        description: Install GitHub Copilot
         allowPrerelease: true
       settings:
-        id: GitHub.GitHubCopilotForCLI
+        id: GitHub.Copilot
         source: winget
 
     # Install Node.js
