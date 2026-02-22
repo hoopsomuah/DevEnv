@@ -1,60 +1,62 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
-$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
-resources:
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  configurationVersion: 0.2.0
+  resources:
 
-  # Verify min OS version requirement
-  - name: Verify min OS version requirement
-    type: Microsoft.Windows.Developer/OsVersion
-    directives:
-      module: Microsoft.Windows.Developer
-      allowPrerelease: true
-    properties:
-      MinVersion: '10.0.22000'
+    # Verify min OS version requirement
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        module: Microsoft.Windows.Developer
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
 
-  # Install GitHub Desktop
-  - name: Install GitHub Desktop
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: GitHub.GitHubDesktop
-      source: winget
+    # Install GitHub Desktop
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install GitHub Desktop
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: GitHub.GitHubDesktop
+        source: winget
 
-  # Install DevHome
-  - name: Install Microsoft Dev Home
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.DevHome
-      source: winget
+    # Install DevHome
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Microsoft Dev Home
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.DevHome
+        source: winget
 
-  # Install PowerToys
-  - name: Install PowerToys
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.PowerToys
-      source: winget
+    # Install PowerToys
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install PowerToys
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.PowerToys
+        source: winget
 
-  # Install Visual Studio 2022
-  - name: Install Visual Studio 2022
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.VisualStudio.2022.Enterprise
-      source: winget
+    # Install Visual Studio 2022
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Install Visual Studio 2022
+      directives:
+        description: Install Visual Studio 2022
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.VisualStudio.2022.Enterprise
+        source: winget
 
-  # Install required VS workloads
-  - name: Install required VS workloads
-    type: Microsoft.VisualStudio.DSC/VSComponents
-    directives:
-      module: Microsoft.VisualStudio.DSC
-    dependsOn:
-      - "[resourceId('Microsoft.WinGet.DSC/WinGetPackage', 'Install Visual Studio 2022')]"
-    properties:
-      productId: Microsoft.VisualStudio.Product.Enterprise
-      channelId: VisualStudio.17.Release
-      vsconfigFile: ${WinGetConfigRoot}\.vsconfig
+    # Install required VS workloads
+    - resource: Microsoft.VisualStudio.DSC/VSComponents
+      directives:
+        description: Install required VS workloads
+        module: Microsoft.VisualStudio.DSC
+      dependsOn:
+        - Install Visual Studio 2022
+      settings:
+        productId: Microsoft.VisualStudio.Product.Enterprise
+        channelId: VisualStudio.17.Release
+        vsconfigFile: ${WinGetConfigRoot}\.vsconfig
