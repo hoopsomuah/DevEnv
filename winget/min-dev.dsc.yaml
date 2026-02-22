@@ -80,13 +80,13 @@ properties:
         id: Microsoft.WindowsTerminal
         source: winget
 
-    # Install .NET SDK 8
+    # Install .NET SDK 10
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install DotNet SDK 8
+        description: Install DotNet SDK 10
         allowPrerelease: true
       settings:
-        id: Microsoft.DotNet.SDK.8
+        id: Microsoft.DotNet.SDK.10
         source: winget
 
   configurationVersion: 0.3.0
