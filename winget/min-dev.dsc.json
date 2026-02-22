@@ -1,118 +1,83 @@
 {
-  "$schema": "https://aka.ms/configuration-dsc-schema/0.3",
-  "properties": {
-    "configurationVersion": "0.3.0",
-    "assertions": [
-      {
-        "resource": "Microsoft.Windows.Developer/OsVersion",
-        "directives": {
-          "description": "Verify min OS version requirement",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "MinVersion": "10.0.22000"
-        }
+  "$schema": "https://aka.ms/dsc/schemas/v3/bundled/config/document.json",
+  "resources": [
+    {
+      "name": "Verify min OS version requirement",
+      "type": "Microsoft.Windows.Developer/OsVersion",
+      "properties": {
+        "MinVersion": "10.0.22000"
       }
-    ],
-    "resources": [
-      {
-        "resource": "Microsoft.Windows.Developer/DeveloperMode",
-        "directives": {
-          "description": "Enable Developer Mode",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "Ensure": "Present"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install Git",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "Git.Git",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install GitHub CLI",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "GitHub.cli",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install GitHub Copilot",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "GitHub.Copilot",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install Node.js",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "OpenJS.NodeJS",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install Oh-My-Posh",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "JanDeDobbeleer.OhMyPosh",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install PowerShell",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "Microsoft.PowerShell",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install Windows Terminal",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "Microsoft.WindowsTerminal",
-          "source": "winget"
-        }
-      },
-      {
-        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
-        "directives": {
-          "description": "Install DotNet SDK 10",
-          "allowPrerelease": true
-        },
-        "settings": {
-          "id": "Microsoft.DotNet.SDK.10",
-          "source": "winget"
-        }
+    },
+    {
+      "name": "Enable Developer Mode",
+      "type": "Microsoft.Windows.Developer/DeveloperMode",
+      "properties": {
+        "Ensure": "Present"
       }
-    ]
-  }
+    },
+    {
+      "name": "Install Git",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "Git.Git",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install GitHub CLI",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "GitHub.cli",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install GitHub Copilot",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "GitHub.Copilot",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install Node.js",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "OpenJS.NodeJS",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install Oh-My-Posh",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "JanDeDobbeleer.OhMyPosh",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install PowerShell",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "Microsoft.PowerShell",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install Windows Terminal",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "Microsoft.WindowsTerminal",
+        "source": "winget"
+      }
+    },
+    {
+      "name": "Install DotNet SDK 10",
+      "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "properties": {
+        "id": "Microsoft.DotNet.SDK.10",
+        "source": "winget"
+      }
+    }
+  ]
 }
