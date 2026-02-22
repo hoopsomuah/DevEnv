@@ -10,11 +10,11 @@ Set-ExecutionPolicy RemoteSigned -Force
 if (!(Get-Module posh-git -ListAvailable)) { Install-Module posh-git -Scope CurrentUser -Force }
 if (!(Get-Module PSReadLine -ListAvailable)) { Install-Module -Name PSReadLine -AllowPrerelease -Scope CurrentUser -Force }
 
-$wingetArgs = '--accept-configuration-agreements --suppress-initial-details --disable-interactivity'
+$wingetArgs = ''
 if ($VerbosePreference -ne 'SilentlyContinue') { $wingetArgs += ' --verbose' }
 
 &winget.exe configure --enable
-&winget.exe configure -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
+&winget.exe configure --accept-configuration-agreements --suppress-initial-details --disable-interactivity -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
 
 if (Confirm-Action "Install all dev apps?")
 { 
