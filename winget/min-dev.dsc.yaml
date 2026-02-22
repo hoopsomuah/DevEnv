@@ -1,22 +1,30 @@
-# yaml-language-server: $schema=https://aka.ms/dsc/schemas/v3/bundled/config/document.vscode.json
-$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 resources:
 
   # Verify min OS version requirement
   - name: Verify min OS version requirement
     type: Microsoft.Windows.Developer/OsVersion
+    directives:
+      module: Microsoft.Windows.Developer
+      allowPrerelease: true
     properties:
       MinVersion: '10.0.22000'
 
   # Configure Developer Mode
   - name: Enable Developer Mode
     type: Microsoft.Windows.Developer/DeveloperMode
+    directives:
+      module: Microsoft.Windows.Developer
+      allowPrerelease: true
     properties:
       Ensure: Present
 
   # Install Git
   - name: Install Git
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Git.Git
       source: winget
@@ -24,6 +32,8 @@ resources:
   # Install GitHub CLI
   - name: Install GitHub CLI
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: GitHub.cli
       source: winget
@@ -31,6 +41,8 @@ resources:
   # Install GitHub Copilot
   - name: Install GitHub Copilot
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: GitHub.Copilot
       source: winget
@@ -38,6 +50,8 @@ resources:
   # Install Node.js
   - name: Install Node.js
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: OpenJS.NodeJS
       source: winget
@@ -45,6 +59,8 @@ resources:
   # Install Oh-My-Posh
   - name: Install Oh-My-Posh
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: JanDeDobbeleer.OhMyPosh
       source: winget
@@ -52,6 +68,8 @@ resources:
   # Install PowerShell
   - name: Install PowerShell
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.PowerShell
       source: winget
@@ -59,6 +77,8 @@ resources:
   # Install Windows Terminal
   - name: Install Windows Terminal
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.WindowsTerminal
       source: winget
@@ -66,6 +86,8 @@ resources:
   # Install .NET SDK 10
   - name: Install DotNet SDK 10
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.DotNet.SDK.10
       source: winget
