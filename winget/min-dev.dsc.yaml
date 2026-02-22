@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
 properties:
+  configurationVersion: 0.3.0
   assertions:
     - resource: Microsoft.Windows.Developer/OsVersion
       directives:
@@ -88,5 +89,3 @@ properties:
       settings:
         id: Microsoft.DotNet.SDK.10
         source: winget
-
-  configurationVersion: 0.3.0
