@@ -17,6 +17,7 @@ $wingetArgs = switch ($VerbosePreference) {
     default { '--verbose' }
 }
 
+&winget.exe configure --enable
 &winget.exe configure -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
 
 if (Confirm-Action "Install all dev apps?")
