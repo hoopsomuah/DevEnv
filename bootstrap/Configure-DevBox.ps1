@@ -10,7 +10,7 @@ Set-ExecutionPolicy RemoteSigned -Force
 Write-Host "Installing Requirements..."
 
 &winget.exe configure --enable
-&winget.exe configure --accept-configuration-agreements --suppress-initial-details --disable-interactivity -f $PSScriptRoot\..\winget\min-dev.dsc.yaml
+&winget.exe configure --accept-configuration-agreements --suppress-initial-details --disable-interactivity -f $PSScriptRoot\..\winget\min-dev.dsc.json
 
 # ---  Configure Powershell Profile ---
 if (Test-Path $Profile.CurrentUserAllHosts)
