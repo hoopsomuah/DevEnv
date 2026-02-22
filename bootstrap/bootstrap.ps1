@@ -2,7 +2,7 @@
 .SYNOPSIS
     Web Bootstrap script for a new machine.
 .NOTES
-    Invoke-WebRequest -Headers @{"Cache-Control"="no-cache"} -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/main/bootstrap.ps1" | Invoke-Expression
+    Invoke-WebRequest -Headers @{"Cache-Control"="no-cache"} -UseBasicParsing "https://raw.githubusercontent.com/hoopsomuah/DevEnv/refs/heads/main/bootstrap/bootstrap.ps1" | Invoke-Expression
 #>
 $repo = "hoopsomuah/DevEnv"
 $repoUrl = "https://github.com/$repo.git"
