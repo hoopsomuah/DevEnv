@@ -26,22 +26,22 @@ properties:
         id: Git.Git
         source: winget
 
-    # Install Visual Studio Code
+    # Install GitHub CLI
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Visual Studio Code
+        description: Install GitHub CLI
         allowPrerelease: true
       settings:
-        id: Microsoft.VisualStudioCode
+        id: GitHub.cli
         source: winget
 
-    # Install JDK 21
+    # Install GitHub Copilot for CLI
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       directives:
-        description: Install Microsoft Open JDK 21
+        description: Install GitHub Copilot for CLI
         allowPrerelease: true
       settings:
-        id: Microsoft.OpenJDK.21
+        id: GitHub.GitHubCopilotForCLI
         source: winget
 
     # Install Node.js
