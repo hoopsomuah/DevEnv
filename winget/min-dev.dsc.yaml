@@ -1,91 +1,71 @@
-# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.3
-properties:
-  configurationVersion: 0.3.0
-  assertions:
-    - resource: Microsoft.Windows.Developer/OsVersion
-      directives:
-        description: Verify min OS version requirement
-        allowPrerelease: true
-      settings:
-        MinVersion: '10.0.22000'
-  resources:
+# yaml-language-server: $schema=https://aka.ms/dsc/schemas/v3/bundled/config/document.vscode.json
+$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+resources:
 
-    # Configure Developer Mode
-    - resource: Microsoft.Windows.Developer/DeveloperMode
-      directives:
-        description: Enable Developer Mode
-        allowPrerelease: true
-      settings:
-        Ensure: Present
+  # Verify min OS version requirement
+  - name: Verify min OS version requirement
+    type: Microsoft.Windows.Developer/OsVersion
+    properties:
+      MinVersion: '10.0.22000'
 
-    # Install Git
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Git
-        allowPrerelease: true
-      settings:
-        id: Git.Git
-        source: winget
+  # Configure Developer Mode
+  - name: Enable Developer Mode
+    type: Microsoft.Windows.Developer/DeveloperMode
+    properties:
+      Ensure: Present
 
-    # Install GitHub CLI
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install GitHub CLI
-        allowPrerelease: true
-      settings:
-        id: GitHub.cli
-        source: winget
+  # Install Git
+  - name: Install Git
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Git.Git
+      source: winget
 
-    # Install GitHub Copilot
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install GitHub Copilot
-        allowPrerelease: true
-      settings:
-        id: GitHub.Copilot
-        source: winget
+  # Install GitHub CLI
+  - name: Install GitHub CLI
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: GitHub.cli
+      source: winget
 
-    # Install Node.js
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Node.js
-        allowPrerelease: true
-      settings:
-        id: OpenJS.NodeJS
-        source: winget
+  # Install GitHub Copilot
+  - name: Install GitHub Copilot
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: GitHub.Copilot
+      source: winget
 
-    # Install Oh-My-Posh
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Oh-My-Posh
-        allowPrerelease: true
-      settings:
-        id: JanDeDobbeleer.OhMyPosh
-        source: winget
+  # Install Node.js
+  - name: Install Node.js
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: OpenJS.NodeJS
+      source: winget
 
-    # Install PowerShell
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install PowerShell
-        allowPrerelease: true
-      settings:
-        id: Microsoft.PowerShell
-        source: winget
+  # Install Oh-My-Posh
+  - name: Install Oh-My-Posh
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: JanDeDobbeleer.OhMyPosh
+      source: winget
 
-    # Install Windows Terminal
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Windows Terminal
-        allowPrerelease: true
-      settings:
-        id: Microsoft.WindowsTerminal
-        source: winget
+  # Install PowerShell
+  - name: Install PowerShell
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.PowerShell
+      source: winget
 
-    # Install .NET SDK 10
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install DotNet SDK 10
-        allowPrerelease: true
-      settings:
-        id: Microsoft.DotNet.SDK.10
-        source: winget
+  # Install Windows Terminal
+  - name: Install Windows Terminal
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.WindowsTerminal
+      source: winget
+
+  # Install .NET SDK 10
+  - name: Install DotNet SDK 10
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.DotNet.SDK.10
+      source: winget
