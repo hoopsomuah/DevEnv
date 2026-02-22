@@ -13,11 +13,6 @@ if ($VerbosePreference -ne 'SilentlyContinue') { $wingetArgs += ' --verbose' }
 &winget.exe configure --enable
 &winget.exe configure --accept-configuration-agreements --suppress-initial-details --disable-interactivity -f $PSScriptRoot\..\winget\min-dev.dsc.yaml $wingetArgs
 
-if (Confirm-Action "Install all dev apps?")
-{ 
-    &winget.exe configure -f $PSScriptRoot\..\winget\dev-plus.dsc.yaml $wingetArgs
-}
-
 # ---  Configure Powershell Profile ---
 if (Test-Path $Profile.CurrentUserAllHosts)
 {
