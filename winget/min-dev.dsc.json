@@ -1,9 +1,13 @@
 {
-  "$schema": "https://aka.ms/dsc/schemas/v3/bundled/config/document.json",
+  "$schema": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json",
   "resources": [
     {
       "name": "Verify min OS version requirement",
       "type": "Microsoft.Windows.Developer/OsVersion",
+      "directives": {
+        "module": "Microsoft.Windows.Developer",
+        "allowPrerelease": true
+      },
       "properties": {
         "MinVersion": "10.0.22000"
       }
@@ -11,6 +15,10 @@
     {
       "name": "Enable Developer Mode",
       "type": "Microsoft.Windows.Developer/DeveloperMode",
+      "directives": {
+        "module": "Microsoft.Windows.Developer",
+        "allowPrerelease": true
+      },
       "properties": {
         "Ensure": "Present"
       }
@@ -18,6 +26,9 @@
     {
       "name": "Install Git",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "Git.Git",
         "source": "winget"
@@ -26,6 +37,9 @@
     {
       "name": "Install GitHub CLI",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "GitHub.cli",
         "source": "winget"
@@ -34,6 +48,9 @@
     {
       "name": "Install GitHub Copilot",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "GitHub.Copilot",
         "source": "winget"
@@ -42,6 +59,9 @@
     {
       "name": "Install Node.js",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "OpenJS.NodeJS",
         "source": "winget"
@@ -50,6 +70,9 @@
     {
       "name": "Install Oh-My-Posh",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "JanDeDobbeleer.OhMyPosh",
         "source": "winget"
@@ -58,6 +81,9 @@
     {
       "name": "Install PowerShell",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "Microsoft.PowerShell",
         "source": "winget"
@@ -66,6 +92,9 @@
     {
       "name": "Install Windows Terminal",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "Microsoft.WindowsTerminal",
         "source": "winget"
@@ -74,6 +103,9 @@
     {
       "name": "Install DotNet SDK 10",
       "type": "Microsoft.WinGet.DSC/WinGetPackage",
+      "directives": {
+        "module": "Microsoft.WinGet.DSC"
+      },
       "properties": {
         "id": "Microsoft.DotNet.SDK.10",
         "source": "winget"

@@ -1,16 +1,21 @@
-# yaml-language-server: $schema=https://aka.ms/dsc/schemas/v3/bundled/config/document.vscode.json
-$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
+$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
 resources:
 
   # Verify min OS version requirement
   - name: Verify min OS version requirement
     type: Microsoft.Windows.Developer/OsVersion
+    directives:
+      module: Microsoft.Windows.Developer
+      allowPrerelease: true
     properties:
       MinVersion: '10.0.22000'
 
   # Install GitHub Desktop
   - name: Install GitHub Desktop
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: GitHub.GitHubDesktop
       source: winget
@@ -18,6 +23,8 @@ resources:
   # Install DevHome
   - name: Install Microsoft Dev Home
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.DevHome
       source: winget
@@ -25,6 +32,8 @@ resources:
   # Install PowerToys
   - name: Install PowerToys
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.PowerToys
       source: winget
@@ -32,6 +41,8 @@ resources:
   # Install Visual Studio 2022
   - name: Install Visual Studio 2022
     type: Microsoft.WinGet.DSC/WinGetPackage
+    directives:
+      module: Microsoft.WinGet.DSC
     properties:
       id: Microsoft.VisualStudio.2022.Enterprise
       source: winget
@@ -39,6 +50,8 @@ resources:
   # Install required VS workloads
   - name: Install required VS workloads
     type: Microsoft.VisualStudio.DSC/VSComponents
+    directives:
+      module: Microsoft.VisualStudio.DSC
     dependsOn:
       - "[resourceId('Microsoft.WinGet.DSC/WinGetPackage', 'Install Visual Studio 2022')]"
     properties:
