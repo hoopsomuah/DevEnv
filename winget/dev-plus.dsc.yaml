@@ -1,65 +1,47 @@
-# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
-properties:
-  assertions:
-    - resource: Microsoft.Windows.Developer/OsVersion
-      directives:
-        description: Verify min OS version requirement
-        allowPrerelease: true
-      settings:
-        MinVersion: '10.0.22000'
-  resources:
-  
-    # Install GitHub Desktop
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install GitHub Desktop
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.DevHome
-        source: winget    
+# yaml-language-server: $schema=https://aka.ms/dsc/schemas/v3/bundled/config/document.vscode.json
+$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+resources:
 
-    # Install DevHome
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install Microsoft Dev Home
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: GitHub.GitHubDesktop
-        source: winget 
+  # Verify min OS version requirement
+  - name: Verify min OS version requirement
+    type: Microsoft.Windows.Developer/OsVersion
+    properties:
+      MinVersion: '10.0.22000'
 
-    # Install PowerToys
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      directives:
-        description: Install PowerToys
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.PowerToys
-        source: winget    
+  # Install GitHub Desktop
+  - name: Install GitHub Desktop
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: GitHub.GitHubDesktop
+      source: winget
 
-    # Install Visual Studio 2022
-    - resource: WinGetPackage
-      id: vsPackage
-      directives:
-        description: Install Visual Studio 2022
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.VisualStudio.2022.Enterprise
-        source: winget
+  # Install DevHome
+  - name: Install Microsoft Dev Home
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.DevHome
+      source: winget
 
-    # Install required VS workloads
-    - resource: Microsoft.VisualStudio.DSC/VSComponents
-      dependsOn:
-        - vsPackage
-      directives:
-        description: Install required VS workloads
-        allowPrerelease: true
-      settings:
-        productId: Microsoft.VisualStudio.Product.Enterprise
-        channelId: VisualStudio.17.Release
-        vsconfigFile: ${WinGetConfigRoot}\.vsconfig
+  # Install PowerToys
+  - name: Install PowerToys
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.PowerToys
+      source: winget
 
-  configurationVersion: 0.2.0
+  # Install Visual Studio 2022
+  - name: Install Visual Studio 2022
+    type: Microsoft.WinGet.DSC/WinGetPackage
+    properties:
+      id: Microsoft.VisualStudio.2022.Enterprise
+      source: winget
+
+  # Install required VS workloads
+  - name: Install required VS workloads
+    type: Microsoft.VisualStudio.DSC/VSComponents
+    dependsOn:
+      - "[resourceId('Microsoft.WinGet.DSC/WinGetPackage', 'Install Visual Studio 2022')]"
+    properties:
+      productId: Microsoft.VisualStudio.Product.Enterprise
+      channelId: VisualStudio.17.Release
+      vsconfigFile: ${WinGetConfigRoot}\.vsconfig
