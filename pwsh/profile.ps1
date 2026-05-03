@@ -93,12 +93,16 @@ function global:colo {
     }
 
     # Bump the model ID suffix when Microsoft publishes a new revision
-    # (`foundry model list` / GET http://localhost:5273/v1/models).
+    # (`foundry model list` / GET http://localhost:5273/v1/models). The token
+    # limits come from the same /v1/models response and silence the
+    # "not in the built-in catalog" warning.
     $overrides = @{
-        COPILOT_PROVIDER_TYPE     = 'openai'
-        COPILOT_PROVIDER_BASE_URL = 'http://localhost:5273/v1'
-        COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
-        COPILOT_OFFLINE           = if ($Offline) { 'true' } else { $null }
+        COPILOT_PROVIDER_TYPE              = 'openai'
+        COPILOT_PROVIDER_BASE_URL          = 'http://localhost:5273/v1'
+        COPILOT_MODEL                      = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
+        COPILOT_PROVIDER_MAX_PROMPT_TOKENS = '28672'
+        COPILOT_PROVIDER_MAX_OUTPUT_TOKENS = '4096'
+        COPILOT_OFFLINE                    = if ($Offline) { 'true' } else { $null }
     }
 
     $saved = @{}
