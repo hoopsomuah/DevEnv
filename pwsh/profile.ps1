@@ -64,3 +64,22 @@ $utilitiesPath = Join-Path $env:pwsh_devenv "pwsh\utilities.ps1"
 . $utilitiesPath
 
 Replace-PsDriveFunctions
+
+#-----------------------------------------------------------------------------------------------------------------
+# GitHub Copilot CLI: route to local Foundry Local server (BYOK)
+#
+# https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models
+#
+# Foundry Local is pinned to port 5273 via:
+#     foundry service set --port 5273
+#
+# This block is idempotent (always sets to the same values) and is gated on
+# `foundry.exe` being on PATH so the profile stays portable to machines
+# without Foundry Local installed.
+#-----------------------------------------------------------------------------------------------------------------
+
+if (Get-Command foundry.exe -ErrorAction SilentlyContinue) {
+    $env:COPILOT_PROVIDER_TYPE     = 'openai'
+    $env:COPILOT_PROVIDER_BASE_URL = 'http://localhost:5273/v1'
+    $env:COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu'
+}
