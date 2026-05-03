@@ -66,23 +66,60 @@ $utilitiesPath = Join-Path $env:pwsh_devenv "pwsh\utilities.ps1"
 Replace-PsDriveFunctions
 
 #-----------------------------------------------------------------------------------------------------------------
-# GitHub Copilot CLI: route to local Foundry Local server (BYOK)
+# GitHub Copilot CLI: opt-in routing to local Foundry Local server (BYOK)
 #
 # https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models
 #
-# Foundry Local is pinned to port 5273 via:
-#     foundry service set --port 5273
+# By default, plain `copilot` keeps using GitHub-hosted models. Run `colo` to
+# launch Copilot CLI against a locally running Foundry Local instance for the
+# duration of that one invocation only. The function saves and restores any
+# pre-existing COPILOT_* env vars so it does not leak into the calling shell.
 #
-# This block is idempotent (always sets to the same values) and is gated on
-# `foundry.exe` being on PATH so the profile stays portable to machines
-# without Foundry Local installed.
+# Foundry Local must be pinned to port 5273 once per machine:
+#     foundry service set --port 5273
 #-----------------------------------------------------------------------------------------------------------------
 
-if (Get-Command foundry.exe -ErrorAction SilentlyContinue) {
-    $env:COPILOT_PROVIDER_TYPE     = 'openai'
-    $env:COPILOT_PROVIDER_BASE_URL = 'http://localhost:5273/v1'
-    # Foundry Local requires the full model ID including the revision suffix
-    # (e.g. ":4"). The bare alias is rejected by /v1/chat/completions with 400.
-    # Bump this when Microsoft publishes a new revision (`foundry model list`).
-    $env:COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
+function global:colo {
+    [CmdletBinding()]
+    param(
+        [switch]$Offline,
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [object[]]$CopilotArgs
+    )
+
+    if (-not (Get-Command foundry.exe -ErrorAction SilentlyContinue)) {
+        Write-Error "Foundry Local is not installed (foundry.exe not on PATH). Install with: winget install Microsoft.FoundryLocal"
+        return
+    }
+
+    # Bump the model ID suffix when Microsoft publishes a new revision
+    # (`foundry model list` / GET http://localhost:5273/v1/models).
+    $overrides = @{
+        COPILOT_PROVIDER_TYPE     = 'openai'
+        COPILOT_PROVIDER_BASE_URL = 'http://localhost:5273/v1'
+        COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
+        COPILOT_OFFLINE           = if ($Offline) { 'true' } else { $null }
+    }
+
+    $saved = @{}
+    foreach ($name in $overrides.Keys) {
+        $saved[$name] = [Environment]::GetEnvironmentVariable($name, 'Process')
+        if ($null -eq $overrides[$name]) {
+            Remove-Item "Env:$name" -ErrorAction SilentlyContinue
+        } else {
+            Set-Item "Env:$name" $overrides[$name]
+        }
+    }
+
+    try {
+        & copilot @CopilotArgs
+    } finally {
+        foreach ($kv in $saved.GetEnumerator()) {
+            if ([string]::IsNullOrEmpty($kv.Value)) {
+                Remove-Item "Env:$($kv.Key)" -ErrorAction SilentlyContinue
+            } else {
+                Set-Item "Env:$($kv.Key)" $kv.Value
+            }
+        }
+    }
 }
