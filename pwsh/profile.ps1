@@ -81,5 +81,8 @@ Replace-PsDriveFunctions
 if (Get-Command foundry.exe -ErrorAction SilentlyContinue) {
     $env:COPILOT_PROVIDER_TYPE     = 'openai'
     $env:COPILOT_PROVIDER_BASE_URL = 'http://localhost:5273/v1'
-    $env:COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu'
+    # Foundry Local requires the full model ID including the revision suffix
+    # (e.g. ":4"). The bare alias is rejected by /v1/chat/completions with 400.
+    # Bump this when Microsoft publishes a new revision (`foundry model list`).
+    $env:COPILOT_MODEL             = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
 }
