@@ -70,22 +70,31 @@ Replace-PsDriveFunctions
 #
 # https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models
 #
-# By default, plain `copilot` keeps using GitHub-hosted models. Run `colo` to
-# launch Copilot CLI against a locally running LM Studio instance for the
-# duration of that one invocation only. The function saves and restores any
-# pre-existing COPILOT_* env vars so it does not leak into the calling shell.
+# By default, plain `copilot` keeps using GitHub-hosted models. Run `colo`,
+# `colo9`, or `colo30` to launch Copilot CLI against a locally running LM
+# Studio instance for the duration of that one invocation only. Each function
+# saves and restores any pre-existing COPILOT_* env vars so they do not leak
+# into the calling shell.
+#
+#     colo    -> qwen/qwen3.5-9b       (default; lighter, fast)
+#     colo9   -> qwen/qwen3.5-9b       (explicit)
+#     colo30  -> qwen/qwen3-coder-30b  (heavier, coder-tuned)
 #
 # Requires LM Studio's local server enabled at http://127.0.0.1:11234 with a
 # tool-calling-capable model loaded at >=64k context (>=128k recommended).
 #-----------------------------------------------------------------------------------------------------------------
 
-function global:colo {
-    param([switch]$Offline)
+function script:Invoke-CopilotLmStudio {
+    param(
+        [string]$Model,
+        [bool]$Offline,
+        [object[]]$ForwardArgs
+    )
 
     $overrides = @{
         COPILOT_PROVIDER_TYPE     = 'openai'
         COPILOT_PROVIDER_BASE_URL = 'http://127.0.0.1:11234/v1'
-        COPILOT_MODEL             = 'qwen/qwen3.5-9b'
+        COPILOT_MODEL             = $Model
         COPILOT_OFFLINE           = if ($Offline) { 'true' } else { $null }
     }
 
@@ -100,7 +109,7 @@ function global:colo {
     }
 
     try {
-        & copilot @args
+        & copilot @ForwardArgs
     } finally {
         foreach ($kv in $saved.GetEnumerator()) {
             if ([string]::IsNullOrEmpty($kv.Value)) {
@@ -110,4 +119,19 @@ function global:colo {
             }
         }
     }
+}
+
+function global:colo {
+    param([switch]$Offline)
+    Invoke-CopilotLmStudio -Model 'qwen/qwen3.5-9b' -Offline $Offline -ForwardArgs $args
+}
+
+function global:colo9 {
+    param([switch]$Offline)
+    Invoke-CopilotLmStudio -Model 'qwen/qwen3.5-9b' -Offline $Offline -ForwardArgs $args
+}
+
+function global:colo30 {
+    param([switch]$Offline)
+    Invoke-CopilotLmStudio -Model 'qwen/qwen3-coder-30b' -Offline $Offline -ForwardArgs $args
 }
