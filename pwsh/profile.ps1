@@ -66,43 +66,27 @@ $utilitiesPath = Join-Path $env:pwsh_devenv "pwsh\utilities.ps1"
 Replace-PsDriveFunctions
 
 #-----------------------------------------------------------------------------------------------------------------
-# GitHub Copilot CLI: opt-in routing to local Foundry Local server (BYOK)
+# GitHub Copilot CLI: opt-in routing to a local LM Studio server (BYOK)
 #
 # https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models
 #
 # By default, plain `copilot` keeps using GitHub-hosted models. Run `colo` to
-# launch Copilot CLI against a locally running Foundry Local instance for the
+# launch Copilot CLI against a locally running LM Studio instance for the
 # duration of that one invocation only. The function saves and restores any
 # pre-existing COPILOT_* env vars so it does not leak into the calling shell.
 #
-# Foundry Local must be pinned to port 5273 once per machine:
-#     foundry service set --port 5273
+# Requires LM Studio's local server enabled at http://127.0.0.1:11234 with a
+# tool-calling-capable model loaded at >=64k context (>=128k recommended).
 #-----------------------------------------------------------------------------------------------------------------
 
 function global:colo {
-    [CmdletBinding()]
-    param(
-        [switch]$Offline,
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [object[]]$CopilotArgs
-    )
+    param([switch]$Offline)
 
-    if (-not (Get-Command foundry.exe -ErrorAction SilentlyContinue)) {
-        Write-Error "Foundry Local is not installed (foundry.exe not on PATH). Install with: winget install Microsoft.FoundryLocal"
-        return
-    }
-
-    # Bump the model ID suffix when Microsoft publishes a new revision
-    # (`foundry model list` / GET http://localhost:5273/v1/models). The token
-    # limits come from the same /v1/models response and silence the
-    # "not in the built-in catalog" warning.
     $overrides = @{
-        COPILOT_PROVIDER_TYPE              = 'openai'
-        COPILOT_PROVIDER_BASE_URL          = 'http://localhost:5273/v1'
-        COPILOT_MODEL                      = 'qwen2.5-coder-14b-instruct-cuda-gpu:4'
-        COPILOT_PROVIDER_MAX_PROMPT_TOKENS = '28672'
-        COPILOT_PROVIDER_MAX_OUTPUT_TOKENS = '4096'
-        COPILOT_OFFLINE                    = if ($Offline) { 'true' } else { $null }
+        COPILOT_PROVIDER_TYPE     = 'openai'
+        COPILOT_PROVIDER_BASE_URL = 'http://127.0.0.1:11234/v1'
+        COPILOT_MODEL             = 'qwen/qwen3.5-9b'
+        COPILOT_OFFLINE           = if ($Offline) { 'true' } else { $null }
     }
 
     $saved = @{}
@@ -116,7 +100,7 @@ function global:colo {
     }
 
     try {
-        & copilot @CopilotArgs
+        & copilot @args
     } finally {
         foreach ($kv in $saved.GetEnumerator()) {
             if ([string]::IsNullOrEmpty($kv.Value)) {
