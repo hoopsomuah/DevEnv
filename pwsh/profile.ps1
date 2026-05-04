@@ -106,11 +106,17 @@ function script:Get-CopilotLmStudioMinimalArgs {
         }
     }
 
-    # Whitelist only the core tools needed for code editing and shell work.
+    # Whitelist a sensible "basics" set: file editing, shell, code intelligence,
+    # web fetch, sub-agents, and session bookkeeping. MCP servers, skills,
+    # plugins, and custom instructions remain disabled.
     $tools = @(
         'view','edit','create',
         'grep','glob','show_file',
         'powershell','write_powershell','read_powershell','stop_powershell','list_powershell',
+        'lsp',
+        'task','list_agents','read_agent','write_agent',
+        'web_fetch','fetch_copilot_cli_documentation',
+        'sql',
         'report_intent'
     )
     foreach ($t in $tools) { $a.Add('--available-tools'); $a.Add($t) }
