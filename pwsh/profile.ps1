@@ -84,6 +84,40 @@ Replace-PsDriveFunctions
 # tool-calling-capable model loaded at >=64k context (>=128k recommended).
 #-----------------------------------------------------------------------------------------------------------------
 
+function script:Get-CopilotLmStudioMinimalArgs {
+    # Strip everything that isn't strictly essential so colo* runs fast and
+    # fits a small local model's context cleanly.
+    $a = [System.Collections.Generic.List[string]]::new()
+    $a.Add('--disable-builtin-mcps')
+    $a.Add('--no-custom-instructions')
+
+    # Disable every user-configured MCP server defined in mcp-config.json
+    $cfgPath = Join-Path $HOME '.copilot\mcp-config.json'
+    if (Test-Path $cfgPath) {
+        try {
+            $cfg = Get-Content $cfgPath -Raw | ConvertFrom-Json
+            if ($cfg.mcpServers) {
+                foreach ($name in $cfg.mcpServers.PSObject.Properties.Name) {
+                    $a.Add('--disable-mcp-server'); $a.Add($name)
+                }
+            }
+        } catch {
+            Write-Warning "colo: could not parse mcp-config.json: $($_.Exception.Message)"
+        }
+    }
+
+    # Whitelist only the core tools needed for code editing and shell work.
+    $tools = @(
+        'view','edit','create',
+        'grep','glob','show_file',
+        'powershell','write_powershell','read_powershell','stop_powershell','list_powershell',
+        'report_intent'
+    )
+    foreach ($t in $tools) { $a.Add('--available-tools'); $a.Add($t) }
+
+    return $a.ToArray()
+}
+
 function script:Invoke-CopilotLmStudio {
     param(
         [string]$Model,
@@ -109,7 +143,8 @@ function script:Invoke-CopilotLmStudio {
     }
 
     try {
-        & copilot @ForwardArgs
+        $minArgs = Get-CopilotLmStudioMinimalArgs
+        & copilot @minArgs @ForwardArgs
     } finally {
         foreach ($kv in $saved.GetEnumerator()) {
             if ([string]::IsNullOrEmpty($kv.Value)) {
