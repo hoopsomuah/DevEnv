@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <title>Boom Squad Walk-Up</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="app" aria-live="polite">
+      <section id="login-view" hidden>
+        <header class="brand">
+          <h1>Boom Squad</h1>
+          <p class="tagline">Walk-up player</p>
+        </header>
+        <button id="login-btn" class="primary">Connect Spotify</button>
+        <p class="hint">Premium account required on whichever device streams audio.</p>
+        <p id="login-error" class="error" hidden></p>
+      </section>
+
+      <section id="roster-view" hidden>
+        <header class="topbar">
+          <h1>Boom Squad</h1>
+          <div class="topbar-actions">
+            <button id="mode-toggle" class="chip" aria-pressed="false" title="Toggle Walk-up / Sample mode">Walk-up</button>
+            <button id="settings-btn" class="icon" aria-label="Settings">⚙︎</button>
+          </div>
+        </header>
+
+        <p id="device-banner" class="banner" hidden></p>
+
+        <ul id="roster" class="roster"></ul>
+
+        <div id="now-playing" class="now-playing" hidden>
+          <div class="np-text">
+            <div class="np-player"></div>
+            <div class="np-track"></div>
+          </div>
+          <div class="np-progress"><span></span></div>
+          <button id="np-stop" class="icon" aria-label="Stop">■</button>
+        </div>
+      </section>
+
+      <dialog id="settings">
+        <form method="dialog">
+          <header>
+            <h2>Settings</h2>
+            <button value="close" class="icon" aria-label="Close">✕</button>
+          </header>
+
+          <fieldset>
+            <legend>Playback device</legend>
+            <select id="device-select"></select>
+            <button id="refresh-devices" type="button">Refresh</button>
+            <p class="hint">Open Spotify on your phone, start any track briefly, then refresh to see it here.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Roster (JSON)</legend>
+            <p class="hint">Edit player data directly. Each player needs <code>trackUri</code> (e.g. <code>spotify:track:7yM...</code>) and <code>startMs</code>. Saves to this device only.</p>
+            <textarea id="roster-json" spellcheck="false" rows="14"></textarea>
+            <div class="row">
+              <button id="roster-save" type="button" class="primary">Save roster</button>
+              <button id="roster-reset" type="button">Reset to default</button>
+            </div>
+            <p id="roster-status" class="status"></p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Account</legend>
+            <button id="logout-btn" type="button">Sign out of Spotify</button>
+          </fieldset>
+        </form>
+      </dialog>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
