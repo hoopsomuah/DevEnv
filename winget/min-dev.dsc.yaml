@@ -1,93 +1,94 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
-$schema: https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json
-resources:
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  configurationVersion: 0.2.0
+  resources:
 
-  # Verify min OS version requirement
-  - name: Verify min OS version requirement
-    type: Microsoft.Windows.Developer/OsVersion
-    directives:
-      module: Microsoft.Windows.Developer
-      allowPrerelease: true
-    properties:
-      MinVersion: '10.0.22000'
+    # Verify min OS version requirement
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        module: Microsoft.Windows.Developer
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.22000'
 
-  # Configure Developer Mode
-  - name: Enable Developer Mode
-    type: Microsoft.Windows.Developer/DeveloperMode
-    directives:
-      module: Microsoft.Windows.Developer
-      allowPrerelease: true
-    properties:
-      Ensure: Present
+    # Configure Developer Mode
+    - resource: Microsoft.Windows.Developer/DeveloperMode
+      directives:
+        description: Enable Developer Mode
+        module: Microsoft.Windows.Developer
+        allowPrerelease: true
+      settings:
+        Ensure: Present
 
-  # Install Git
-  - name: Install Git
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Git.Git
-      source: winget
+    # Install Git
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Git
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Git.Git
+        source: winget
 
-  # Install GitHub CLI
-  - name: Install GitHub CLI
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: GitHub.cli
-      source: winget
+    # Install GitHub CLI
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install GitHub CLI
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: GitHub.cli
+        source: winget
 
-  # Install GitHub Copilot
-  - name: Install GitHub Copilot
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: GitHub.Copilot
-      source: winget
+    # Install GitHub Copilot
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install GitHub Copilot
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: GitHub.Copilot
+        source: winget
 
-  # Install Node.js
-  - name: Install Node.js
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: OpenJS.NodeJS
-      source: winget
+    # Install Node.js
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Node.js
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: OpenJS.NodeJS
+        source: winget
 
-  # Install Oh-My-Posh
-  - name: Install Oh-My-Posh
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: JanDeDobbeleer.OhMyPosh
-      source: winget
+    # Install Oh-My-Posh
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Oh-My-Posh
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: JanDeDobbeleer.OhMyPosh
+        source: winget
 
-  # Install PowerShell
-  - name: Install PowerShell
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.PowerShell
-      source: winget
+    # Install PowerShell
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install PowerShell
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.PowerShell
+        source: winget
 
-  # Install Windows Terminal
-  - name: Install Windows Terminal
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.WindowsTerminal
-      source: winget
+    # Install Windows Terminal
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install Windows Terminal
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.WindowsTerminal
+        source: winget
 
-  # Install .NET SDK 10
-  - name: Install DotNet SDK 10
-    type: Microsoft.WinGet.DSC/WinGetPackage
-    directives:
-      module: Microsoft.WinGet.DSC
-    properties:
-      id: Microsoft.DotNet.SDK.10
-      source: winget
+    # Install .NET SDK 10
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      directives:
+        description: Install DotNet SDK 10
+        module: Microsoft.WinGet.DSC
+      settings:
+        id: Microsoft.DotNet.SDK.10
+        source: winget

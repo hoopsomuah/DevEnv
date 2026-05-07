@@ -1,115 +1,118 @@
 {
-  "$schema": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2023/08/config/document.json",
-  "resources": [
-    {
-      "name": "Verify min OS version requirement",
-      "type": "Microsoft.Windows.Developer/OsVersion",
-      "directives": {
-        "module": "Microsoft.Windows.Developer",
-        "allowPrerelease": true
+  "$schema": "https://aka.ms/configuration-dsc-schema/0.2",
+  "properties": {
+    "configurationVersion": "0.2.0",
+    "resources": [
+      {
+        "resource": "Microsoft.Windows.Developer/OsVersion",
+        "directives": {
+          "description": "Verify min OS version requirement",
+          "module": "Microsoft.Windows.Developer",
+          "allowPrerelease": true
+        },
+        "settings": {
+          "MinVersion": "10.0.22000"
+        }
       },
-      "properties": {
-        "MinVersion": "10.0.22000"
-      }
-    },
-    {
-      "name": "Enable Developer Mode",
-      "type": "Microsoft.Windows.Developer/DeveloperMode",
-      "directives": {
-        "module": "Microsoft.Windows.Developer",
-        "allowPrerelease": true
+      {
+        "resource": "Microsoft.Windows.Developer/DeveloperMode",
+        "directives": {
+          "description": "Enable Developer Mode",
+          "module": "Microsoft.Windows.Developer",
+          "allowPrerelease": true
+        },
+        "settings": {
+          "Ensure": "Present"
+        }
       },
-      "properties": {
-        "Ensure": "Present"
-      }
-    },
-    {
-      "name": "Install Git",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install Git",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "Git.Git",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "Git.Git",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install GitHub CLI",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install GitHub CLI",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "GitHub.cli",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "GitHub.cli",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install GitHub Copilot",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install GitHub Copilot",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "GitHub.Copilot",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "GitHub.Copilot",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install Node.js",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install Node.js",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "OpenJS.NodeJS",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "OpenJS.NodeJS",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install Oh-My-Posh",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install Oh-My-Posh",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "JanDeDobbeleer.OhMyPosh",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "JanDeDobbeleer.OhMyPosh",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install PowerShell",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install PowerShell",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "Microsoft.PowerShell",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "Microsoft.PowerShell",
-        "source": "winget"
-      }
-    },
-    {
-      "name": "Install Windows Terminal",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install Windows Terminal",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "Microsoft.WindowsTerminal",
+          "source": "winget"
+        }
       },
-      "properties": {
-        "id": "Microsoft.WindowsTerminal",
-        "source": "winget"
+      {
+        "resource": "Microsoft.WinGet.DSC/WinGetPackage",
+        "directives": {
+          "description": "Install DotNet SDK 10",
+          "module": "Microsoft.WinGet.DSC"
+        },
+        "settings": {
+          "id": "Microsoft.DotNet.SDK.10",
+          "source": "winget"
+        }
       }
-    },
-    {
-      "name": "Install DotNet SDK 10",
-      "type": "Microsoft.WinGet.DSC/WinGetPackage",
-      "directives": {
-        "module": "Microsoft.WinGet.DSC"
-      },
-      "properties": {
-        "id": "Microsoft.DotNet.SDK.10",
-        "source": "winget"
-      }
-    }
-  ]
+    ]
+  }
 }
